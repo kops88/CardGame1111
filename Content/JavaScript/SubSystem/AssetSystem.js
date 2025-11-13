@@ -6,11 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssetSystem = void 0;
 console.log('[AssetSystem] head');
 const ue_1 = __importDefault(require("ue"));
+console.log("[AssetSystem] before import gameInstance");
+console.log("[AssetSystem] After import gameInstance");
 const SystemName_1 = require("./SystemName");
 console.log('[AssetSystem] start');
 class AssetSystem extends SystemName_1.SystemBase {
     static _instance;
-    CardTable;
+    CardTable = undefined;
     static GetInstance(WorldContextObject) {
         if (!AssetSystem._instance) {
             AssetSystem._instance = new AssetSystem(WorldContextObject);
@@ -19,7 +21,9 @@ class AssetSystem extends SystemName_1.SystemBase {
     }
     constructor(WorldContextObject) {
         super();
-        this.CardTable = ue_1.default.GameplayStatics.GetGameInstance(WorldContextObject).GetCardTable();
+        // this.CardTable = (UE.GameplayStatics.GetGameInstance(WorldContextObject) as GameInstance).GetCardTable();
+        console.log("[GameInstance] AS.constructor hello");
+        ue_1.default.GameplayStatics.GetGameInstance(WorldContextObject).printhello();
     }
     /**
      * @description 通过 cid(rowname) 获取CardDef结构

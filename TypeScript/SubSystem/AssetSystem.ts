@@ -3,7 +3,9 @@ console.log('[AssetSystem] head')
 
 import UE from 'ue';
 import { $Nullable } from "puerts";
+console.log("[AssetSystem] before import gameInstance");
 import { GameInstance } from '../Blueprint/GameMode/BP_GI';
+console.log("[AssetSystem] After import gameInstance");
 import { CardDef } from '../Blueprint/BPW/CardInstance/CardInstance';
 import { SystemBase } from './SystemName';
 console.log('[AssetSystem] start');
@@ -13,7 +15,7 @@ console.log('[AssetSystem] start');
 
 export class AssetSystem extends SystemBase{
     private static _instance: AssetSystem;
-    private CardTable:UE.DataTable;
+    private CardTable:UE.DataTable | undefined = undefined;
     
     static GetInstance(WorldContextObject: $Nullable<UE.Object>): AssetSystem {
         if (!AssetSystem._instance) {
@@ -24,7 +26,9 @@ export class AssetSystem extends SystemBase{
 
     private constructor(WorldContextObject: $Nullable<UE.Object>) {
         super();
-        this.CardTable = (UE.GameplayStatics.GetGameInstance(WorldContextObject) as GameInstance).GetCardTable();
+        // this.CardTable = (UE.GameplayStatics.GetGameInstance(WorldContextObject) as GameInstance).GetCardTable();
+        console.log("[GameInstance] AS.constructor hello");
+        (UE.GameplayStatics.GetGameInstance(WorldContextObject) as GameInstance).printhello();
     }
 
     /**
