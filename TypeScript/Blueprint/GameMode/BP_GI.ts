@@ -1,0 +1,25 @@
+console.log("[BP_GI].Start")
+import UE from 'ue';
+import { BlueprintPath } from '../Path';
+import { blueprint } from 'puerts';
+
+
+
+const uclass = UE.Class.Load(BlueprintPath.BP_GI);
+const jsclass = blueprint.tojs(uclass); 
+
+export interface GameInstance extends UE.Game.Blueprint.GameMode.BP_GI.BP_GI_C {}
+export class GameInstance {
+
+    GetCardTable() {
+        console.log("[GameInstance].GetCardTable")
+        if(!this.CardTable) {
+            console.log("[GameInstance].GetCardTable:Error: !this.CardTable")
+        }
+        return this.CardTable;
+    }
+
+}
+
+blueprint.mixin(jsclass, GameInstance)
+console.log("[BP_GI].Finish")
