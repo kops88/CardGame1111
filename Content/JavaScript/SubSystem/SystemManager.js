@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SystemManager = void 0;
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 14:50:41
@@ -7,102 +10,79 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 console.log('[SystemManager] head');
-import { $Nullable } from "puerts";
-import UE from "ue";
-import { SystemNameEnum, SystemType, SystemModuleType, SystemBase } from "./SystemName";
-import { DuelPage } from '../Blueprint/BPW/Page/BPW_DuelPage';
-import { AssetSystem } from "./AssetSystem";
-import { GameOperationSystem } from "./GameOperationSystem"
-
+const SystemName_1 = require("./SystemName");
+const AssetSystem_1 = require("./AssetSystem");
+const GameOperationSystem_1 = require("./GameOperationSystem");
 console.log('[SystemManager] start');
-
-
-export class SystemManager {
-
-    private static _instance: SystemManager;
-    
-    private static WorldContext: $Nullable<UE.Object> = null;
-
-    private AllSystems: Map<string, SystemBase> = new Map();
-
-    private HandZone: DuelPage | undefined = undefined;
-
-    private constructor() {
+class SystemManager {
+    static _instance;
+    static WorldContext = null;
+    AllSystems = new Map();
+    HandZone = undefined;
+    constructor() {
     }
-
-    static get instance(): SystemManager | null {
-        if(!SystemManager.WorldContext) {
+    static get instance() {
+        if (!SystemManager.WorldContext) {
             console.log("[SystemManager].WorldContext is null");
             return null;
         }
-        if(!SystemManager._instance) {
+        if (!SystemManager._instance) {
             SystemManager._instance = new SystemManager();
         }
         return SystemManager._instance;
     }
-
-    
-
-    GetSystem<T extends SystemType>(systemName: T): SystemModuleType[T] 
-    GetSystem(systemName: string) {
+    GetSystem(systemName) {
         const syst = this.AllSystems?.get(systemName);
-        if(syst) return syst;
+        if (syst)
+            return syst;
         return this.AddSystem(systemName);
-        
     }
-
-    private AddSystem(systemName: string) {
-        switch (SystemNameEnum[systemName as SystemType]) {
-            case SystemNameEnum.AssetSystem:
-                this.AllSystems.set(systemName, AssetSystem.GetInstance(SystemManager.WorldContext));
+    AddSystem(systemName) {
+        switch (SystemName_1.SystemNameEnum[systemName]) {
+            case SystemName_1.SystemNameEnum.AssetSystem:
+                this.AllSystems.set(systemName, AssetSystem_1.AssetSystem.GetInstance(SystemManager.WorldContext));
                 break;
-            case SystemNameEnum.GameOperationSystem:
-                this.AllSystems.set(systemName, GameOperationSystem.instance);
+            case SystemName_1.SystemNameEnum.GameOperationSystem:
+                this.AllSystems.set(systemName, GameOperationSystem_1.GameOperationSystem.instance);
             default:
                 console.log("[SystemManager].AddSystem:Error: systemName is not found, systemName:", systemName);
                 break;
         }
         return this.AllSystems?.get(systemName);
     }
-
     /**
      * @description 设置World，部分系统需要用到
      * @example BP_PC.ReceiveBeginPlay
      */
-    static SetWorld(world: $Nullable<UE.Object>) {
+    static SetWorld(world) {
         console.log("[SystemManager].SetWorld:", world);
         this.WorldContext = world;
     }
-
     /**
      * 方便获取World函数
      */
     static GetWorld() {
-        if(!this.WorldContext) {
+        if (!this.WorldContext) {
             console.log("[SystemManager].GetWorld:Error: WorldContext = ", this.WorldContext);
         }
         return this.WorldContext;
     }
-
     /**
      * @description 在 DuelPage 构造的时候调用。在需要的时候，通过SystemManager 获取 DuelPage
      * @param Hand DuelPage
      */
-    SetHandZone(Hand: DuelPage) {
-            console.log("[SystemManager].SetHandZone: HandZone is ", Hand);
+    SetHandZone(Hand) {
+        console.log("[SystemManager].SetHandZone: HandZone is ", Hand);
         this.HandZone = Hand;
     }
-
-    GetHandZone(): DuelPage | undefined {
-        if(!this.HandZone) {
-            console.log("[SystemManager].GetHandZone:Error: HandZone is Undefined")
+    GetHandZone() {
+        if (!this.HandZone) {
+            console.log("[SystemManager].GetHandZone:Error: HandZone is Undefined");
             return undefined;
         }
         return this.HandZone;
     }
-
-
-
 }
-
+exports.SystemManager = SystemManager;
 console.log("[SystemManager].Finish");
+//# sourceMappingURL=SystemManager.js.map

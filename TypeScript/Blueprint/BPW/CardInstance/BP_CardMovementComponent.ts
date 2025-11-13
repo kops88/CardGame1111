@@ -4,6 +4,7 @@ import { blueprint } from 'puerts';
 import { BlueprintPath } from '../../Path';
 // import "Blueprint/BPW/CardInstance/BPW_CardInstance";
 import { SampleWidget  } from './BPW_SampleWidget';
+import { CardInstance } from './CardInstance';
 
 
 
@@ -109,18 +110,19 @@ export class BP_CardMovementComponent {
         return true;
     }
 
+
+
     /**
      * @description 创建 SampleWidget，添加到 SampleList，设置位置，开始插值
      */
-    AddCard(): void {
+    AddCard(cardInstance: CardInstance): void {
         console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
-        const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
-        if (CardClass) {
-            let mSampleWidget = UE.WidgetBlueprintLibrary.Create(this.GetWorld(),
-                CardClass,
-                UE.GameplayStatics.GetPlayerController(this.GetWorld(), 0)
-            ) as SampleWidget;
-            console.log("Created SampleWidget:", mSampleWidget);
+
+        // const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
+
+        let mSampleWidget = cardInstance.GetSample();
+        if(mSampleWidget)
+        {
             mSampleWidget.AddToViewport();
             this.RegisterEvents(mSampleWidget);
             this.SampleList.push(mSampleWidget);

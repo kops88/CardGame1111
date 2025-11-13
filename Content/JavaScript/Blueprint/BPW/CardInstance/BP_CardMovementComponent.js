@@ -99,12 +99,11 @@ class BP_CardMovementComponent {
     /**
      * @description 创建 SampleWidget，添加到 SampleList，设置位置，开始插值
      */
-    AddCard() {
+    AddCard(cardInstance) {
         console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
-        const CardClass = ue_1.default.Class.Load(Path_1.BlueprintPath.BPW_SampleWidget);
-        if (CardClass) {
-            let mSampleWidget = ue_1.default.WidgetBlueprintLibrary.Create(this.GetWorld(), CardClass, ue_1.default.GameplayStatics.GetPlayerController(this.GetWorld(), 0));
-            console.log("Created SampleWidget:", mSampleWidget);
+        // const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
+        let mSampleWidget = cardInstance.GetSample();
+        if (mSampleWidget) {
             mSampleWidget.AddToViewport();
             this.RegisterEvents(mSampleWidget);
             this.SampleList.push(mSampleWidget);

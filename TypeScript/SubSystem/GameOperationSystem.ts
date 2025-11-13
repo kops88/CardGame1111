@@ -1,26 +1,40 @@
 
 import { AssetSystem } from './AssetSystem';
-import { SystemManager, SystemNameEnum, SystemType } from './SystemManager';
+import { SystemManager,  } from './SystemManager';
+import { SystemEnum, SystemType } from './SystemName';
+import { DuelPage } from '../Blueprint/BPW/Page/BPW_DuelPage';
 
 
 
 
-class GameOperationSystem {
+export class GameOperationSystem {
 
     private static _instance: GameOperationSystem;
-    private AS: AssetSystem | null = null;
+    private AS: AssetSystem | undefined = undefined;
+    private HandZone: DuelPage | undefined = undefined;
     static get instance(): GameOperationSystem {
         if(!GameOperationSystem._instance) {
             GameOperationSystem._instance = new GameOperationSystem();
         }
         if(!GameOperationSystem._instance.AS) {
-            GameOperationSystem._instance.AS = SystemManager.instance?.GetSystem(SystemNameEnum.AssetSystem as SystemType) as AssetSystem;
+            GameOperationSystem._instance.AS = SystemManager.instance?.GetSystem(SystemEnum.AssetSystem) as AssetSystem;
+        }
+        if(!GameOperationSystem._instance.HandZone) {
+            GameOperationSystem._instance.HandZone = SystemManager.instance?.GetHandZone();
         }
         return GameOperationSystem._instance;
     }
 
-    DrawCardByCid(cid: string): void {
-
+    /** 
+     * 统一的抽卡函数
+     * @description 根据cid，抽取卡牌到手卡区域
+     */
+    DrawCardByCid(cid: string | number): void {
+        cid = typeof cid === 'number'? cid.toString() : cid;
+        const def = this.AS?.GetCardDefByCid(cid);
+        if(def) {
+            this.HandZone?.AddCardToHand(def)
+        }
     }
 
 }

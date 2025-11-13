@@ -1,23 +1,22 @@
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-07 10:10:18
- * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-11 10:34:29
+ * @LastEditors: v_lyyulliu
+ * @LastEditTime: 2025-11-13 15:01:03
  * @FilePath: \CardGame1102\TypeScript\Blueprint\BPW\CardInstance\BPW_DragWidget.ts
  * @Description: 卡片的img、拖拽等功能，不负责数据和战斗逻辑。
  */
-console.log("[BPW_SampleWidget].Start")
+console.log("[BPW_SampleWidget] head")
 import UE from 'ue';
 import { blueprint, load } from 'puerts';
 import { BlueprintPath } from '../../Path';
 import path = UE.Game.Blueprint.BPW.CardInstance;
 import { TsDelegate } from '../../../SubSystem/EventSystem';
+import { CardDef } from './CardInstance';
 
-console.log("[BPW_SampleWidget].uclass.loadStart")
+console.log("[BPW_SampleWidget].Start")
 const uclass = UE.Class.Load("/Game/Blueprint/BPW/CardInstance/BPW_SampleWidget.BPW_SampleWidget_C");
-console.log("[BPW_SampleWidget].uclass.loadFinish")
 const jsclass = blueprint.tojs(uclass);
-console.log("[BPW_SampleWidget].jsclass.tojsFinish")
 
 
 
@@ -50,6 +49,17 @@ export class SampleWidget{
         this.Button.OnReleased.Add(() =>{
             this.OnDragReleased.Broadcast(this);
         });
+    }
+
+    /**
+     *@description 设置Sample的img 
+     */
+    Init(def: CardDef) {
+        if(!def.img){
+            console.log("[SampleWidget].Init:Error: img is null, cid = ", def.cid);
+            return;
+        }
+        this.img.SetBrushFromSoftTexture(def.img);
     }
 
     OnMouseEnter(MyGeometry: UE.Geometry, MouseEvent: UE.PointerEvent) : void{

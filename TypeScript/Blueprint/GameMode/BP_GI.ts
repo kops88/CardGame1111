@@ -1,8 +1,9 @@
-console.log("[BP_GI].Start")
+console.log("[BP_GI].head")
 import UE from 'ue';
 import { BlueprintPath } from '../Path';
 import { blueprint } from 'puerts';
 
+console.log("[BP_GI].Start")
 
 
 const uclass = UE.Class.Load(BlueprintPath.BP_GI);

@@ -1,7 +1,8 @@
+console.log("[BP_PC] head")
 import UE from 'ue';
-import { BlueprintPath } from '../Path';
 import { blueprint } from 'puerts';
-
+import { BlueprintPath } from '../Path';
+import { SystemManager } from '../../SubSystem/SystemManager';
 
 /**
  * ts mixin 到蓝图类
@@ -10,7 +11,7 @@ import { blueprint } from 'puerts';
  * 3. 定义ts类，方法和属性和蓝图类一致
  * 4. 使用blueprint.mixin混入
  */
-console.log("[BP_PC].StartMixin")
+console.log("[BP_PC] Start")
 const uclass_PC = UE.Class.Load(BlueprintPath.BP_PC);
 const jsclass_PC = blueprint.tojs(uclass_PC);
 export interface PlayerController extends UE.Game.Blueprint.GameMode.BP_PC.BP_PC_C {}
@@ -20,14 +21,15 @@ export class PlayerController {
         console.log("BP_PC ReceiveBeginPlay");
         UE.WidgetBlueprintLibrary.Create(this, UE.Class.Load(BlueprintPath.BPW_DuelPage), this).AddToViewport();
         this.bShowMouseCursor = true;
+        SystemManager.SetWorld(this.GetWorld());
     }
 }
 
 
 
 
-blueprint.mixin(jsclass_PC, PlayerController);
-console.log("[BP_PC].Mixed in Finished");
+blueprint.mixin(jsclass_PC, PlayerController); 
+console.log("[BP_PC] Finish");
 
 
 

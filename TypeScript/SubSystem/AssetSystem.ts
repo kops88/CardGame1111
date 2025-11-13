@@ -1,11 +1,17 @@
+
+console.log('[AssetSystem] head')
+
 import UE from 'ue';
+import { $Nullable } from "puerts";
 import { GameInstance } from '../Blueprint/GameMode/BP_GI';
 import { CardDef } from '../Blueprint/BPW/CardInstance/CardInstance';
-import { $Nullable } from "puerts";
+import { SystemBase } from './SystemName';
+console.log('[AssetSystem] start');
 
-export class AssetSystem {
 
 
+
+export class AssetSystem extends SystemBase{
     private static _instance: AssetSystem;
     private CardTable:UE.DataTable;
     
@@ -17,9 +23,13 @@ export class AssetSystem {
     }
 
     private constructor(WorldContextObject: $Nullable<UE.Object>) {
+        super();
         this.CardTable = (UE.GameplayStatics.GetGameInstance(WorldContextObject) as GameInstance).GetCardTable();
     }
 
+    /**
+     * @description 通过 cid(rowname) 获取CardDef结构
+     */
     GetCardDefByCid(cid: string): CardDef | null {
         console.log("[AssetSystem].GetCardDefByCid.cid:", cid,"   this.CardTable:",this.CardTable);
         if(this.CardTable) {
@@ -29,7 +39,7 @@ export class AssetSystem {
         }
         return null;
     }
-
-
-
 }
+
+
+console.log('[AssetSystem] finish')

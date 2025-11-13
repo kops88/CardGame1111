@@ -1,8 +1,8 @@
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
- * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-12 15:38:26
+ * @LastEditors: v_lyyulliu
+ * @LastEditTime: 2025-11-13 14:26:18
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,15 +14,17 @@
  * @FilePath: \CardGame1102\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-console.log("[BPW_DuelPage].Start")
+console.log("[BPW_DuelPage] head")
 import UE, { Class, TArray } from 'ue';
 import { blueprint } from 'puerts';
 import { BlueprintPath } from '../../Path';
-// import "Blueprint/BPW/CardInstance/BPW_CardInstance";
 import { BP_CardMovementComponent } from "../CardInstance/BP_CardMovementComponent";
+import { SystemManager } from '../../../SubSystem/SystemManager';
+import { SystemEnum } from '../../../SubSystem/SystemName';
+import { CardDef, CardInstance } from '../CardInstance/CardInstance';
 
 
-console.log("[BPW_DuelPage].Mixin Start");
+console.log("[BPW_DuelPage] Start");
 const uclass = UE.Class.Load(BlueprintPath.BPW_DuelPage);
 const jsclass = blueprint.tojs(uclass);
 
@@ -34,6 +36,8 @@ export class DuelPage {
     Construct() {
         console.log("[BPW_DuelPage].Construct");
 
+        SystemManager.instance?.SetHandZone(this);
+        
         this.InitMovementComponent();
 
         this.RegisterEvents();
@@ -46,7 +50,11 @@ export class DuelPage {
         // TestBtn1 点击后添加一个卡牌。
         this.TestBtn1.OnClicked.Add(() => {
             console.log("[BPW_DuelPage].TestBtn1 Clicked");
-            this.mCardMovementComponent?.AddCard();
+            // this.mCardMovementComponent?.AddCard();
+            const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
+            let cid = 1;
+            Op?.DrawCardByCid( cid++ % 2);
+            console.log("[DuelPage].TestBtn1 Clicked, cid = ", cid - 1);
         });
 
         this.StartGameBtn.OnClicked.Add(() => {
@@ -67,6 +75,19 @@ export class DuelPage {
         UE.GameplayStatics.FinishSpawningActor(this.mCardMovementComponent, UE.Transform.Identity);
         console.log("[BPW_DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);
     }
+
+    /**
+     * @description 创建卡牌、初始化、添加到手牌区
+     * @example GameOperationSystem.DrawCardByCid
+     * 
+     */
+    AddCardToHand(def: CardDef) {
+        const card = new CardInstance(def);
+        card.InitSample();
+
+
+    }
+
 }
 
 
