@@ -12,16 +12,6 @@ console.log("[GameInstance].Start");
 const uclass = ue_1.default.Class.Load(Path_1.BlueprintPath.BP_GI);
 const jsclass = puerts_1.blueprint.tojs(uclass);
 class GameInstance {
-    GetCardTable() {
-        console.log("[GameInstance].GetCardTable");
-        if (!this.CardTable) {
-            console.log("[GameInstance].GetCardTable:Error: !this.CardTable");
-        }
-        return this.CardTable;
-    }
-    printhello() {
-        console.log("[GameInstance] hello");
-    }
 }
 exports.GameInstance = GameInstance;
 puerts_1.blueprint.mixin(jsclass, GameInstance);

@@ -12,17 +12,13 @@ const jsclass = blueprint.tojs(uclass);
 export interface GameInstance extends UE.Game.Blueprint.GameMode.BP_GI.BP_GI_C {}
 export class GameInstance {
 
-    GetCardTable() {
-        console.log("[GameInstance].GetCardTable")
-        if(!this.CardTable) {
-            console.log("[GameInstance].GetCardTable:Error: !this.CardTable")
-        }
-        return this.CardTable;
-    }
-
-    printhello() {
-        console.log("[GameInstance] hello");
-    }
+    // GetCardTable() {
+    //     console.log("[GameInstance].GetCardTable")
+    //     if(!this.CardTable) {
+    //         console.log("[GameInstance].GetCardTable:Error: !this.CardTable")
+    //     }
+    //     return this.CardTable;
+    // }
 
 }
 

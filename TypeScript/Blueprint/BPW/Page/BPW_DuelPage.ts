@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-13 14:26:18
+ * @LastEditTime: 2025-11-15 16:44:58
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -34,10 +34,8 @@ export class DuelPage {
     private mCardMovementComponent: BP_CardMovementComponent | null = null;
 
     Construct() {
-        console.log("[BPW_DuelPage].Construct");
-
         SystemManager.instance?.SetHandZone(this);
-        
+        console.log("[BPW_DuelPage].Construct, instance = ", SystemManager.instance);
         this.InitMovementComponent();
 
         this.RegisterEvents();

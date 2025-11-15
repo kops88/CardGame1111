@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 14:50:41
  * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-13 15:28:26
+ * @LastEditTime: 2025-11-15 16:43:50
  * @FilePath: \CG1111\TypeScript\SubSystem\SystemName.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,12 +31,10 @@ export class SystemManager {
     }
 
     static get instance(): SystemManager | null {
-        if(!SystemManager.WorldContext) {
-            console.log("[SystemManager].WorldContext is null");
-            return null;
-        }
         if(!SystemManager._instance) {
             SystemManager._instance = new SystemManager();
+            SystemManager._instance.AllSystems = new Map();
+            console.log("[SystemManager].instance: Create new instance, Create AllSystem = ", this._instance.AllSystems);
         }
         return SystemManager._instance;
     }
@@ -48,16 +46,18 @@ export class SystemManager {
         const syst = this.AllSystems?.get(systemName);
         if(syst) return syst;
         return this.AddSystem(systemName);
-        
     }
 
     private AddSystem(systemName: string) {
         switch (SystemNameEnum[systemName as SystemType]) {
             case SystemNameEnum.AssetSystem:
                 this.AllSystems.set(systemName, AssetSystem.GetInstance(SystemManager.WorldContext));
+                console.log("[SystemManager].AddSystem:AssetSystem")
                 break;
             case SystemNameEnum.GameOperationSystem:
                 this.AllSystems.set(systemName, GameOperationSystem.instance);
+                console.log("[SystemManager].AddSystem:GameOperationSystem")
+                break;
             default:
                 console.log("[SystemManager].AddSystem:Error: systemName is not found, systemName:", systemName);
                 break;
