@@ -21,6 +21,11 @@ export const BlueprintPath = {
     CardDef: "/Game/Blueprint/Table/CardDef.CardDef",
     
     BP_CardMovementComponent: "/Game/Blueprint/BPW/Page/BP_CardMovementComponentt.BP_CardMovementComponentt_C",
+
+    // CardActionBase
+    BP_OnTrigger: "Game/Blueprint/CardAction/CardActionBase/BP_OnTrigger.BP_OnTrigger_C",
+    BP_OnAction: "Game/Blueprint/CardAction/CardActionBase/BP_OnAction.BP_OnAction_C",
+    BP_OnEnd:"Game/Blueprint/CardAction/CardActionBase/BP_OnEnd.BP_OnEnd_C",
 };
 
 console.log("[Path].Finish")

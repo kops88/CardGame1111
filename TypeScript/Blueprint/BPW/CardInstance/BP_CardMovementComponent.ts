@@ -36,6 +36,40 @@ export class BP_CardMovementComponent {
         this.ProcessInterp(DeltaSeconds);
     }
 
+    
+    /**
+     * @description 获取CardInstance 的 SampleWidget，添加到 SampleList，设置位置，开始插值
+     */
+    AddCard(cardInstance: CardInstance): void {
+        console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
+
+        // const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
+
+        let mSampleWidget = cardInstance.GetSample();
+        if(mSampleWidget)
+        {
+            mSampleWidget.AddToViewport();
+            this.RegisterEvents(mSampleWidget);
+            this.SampleList.push(mSampleWidget);
+
+            let transform = new UE.WidgetTransform();
+            const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
+            const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
+            transform.Translation.X = 200;
+            transform.Translation.Y = 2 * WindowCenter.Y - this.High;
+            mSampleWidget.SetRenderTransform(transform);
+            console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
+
+            // 计算目标位置
+            this.TargetPos.Empty();
+            for(let idx = 0; idx < this.SampleList.length; idx++){
+                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High);
+                this.TargetPos.Add(pos);
+            }
+        }
+        this.StartInterp();
+    }
+    
     /**
      * @description 初始化数据
      */
@@ -112,38 +146,6 @@ export class BP_CardMovementComponent {
 
 
 
-    /**
-     * @description 创建 SampleWidget，添加到 SampleList，设置位置，开始插值
-     */
-    AddCard(cardInstance: CardInstance): void {
-        console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
-
-        // const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
-
-        let mSampleWidget = cardInstance.GetSample();
-        if(mSampleWidget)
-        {
-            mSampleWidget.AddToViewport();
-            this.RegisterEvents(mSampleWidget);
-            this.SampleList.push(mSampleWidget);
-
-            let transform = new UE.WidgetTransform();
-            const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-            const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
-            transform.Translation.X = 200;
-            transform.Translation.Y = 2 * WindowCenter.Y - this.High;
-            mSampleWidget.SetRenderTransform(transform);
-            console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
-
-            // 计算目标位置
-            this.TargetPos.Empty();
-            for(let idx = 0; idx < this.SampleList.length; idx++){
-                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High);
-                this.TargetPos.Add(pos);
-            }
-        }
-        this.StartInterp();
-    }
 
     /**
      * @description 注册点击、悬挂事件

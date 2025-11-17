@@ -7,8 +7,8 @@ exports.CardInstance = void 0;
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-10 18:08:19
- * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-13 17:18:36
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-17 12:06:02
  * @FilePath: \CardGame1102\TypeScript\Blueprint\BPW\CardInstance\CardInstance.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */

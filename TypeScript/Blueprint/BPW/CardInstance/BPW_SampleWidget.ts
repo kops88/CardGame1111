@@ -1,8 +1,8 @@
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-07 10:10:18
- * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-13 15:01:03
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-17 13:14:57
  * @FilePath: \CardGame1102\TypeScript\Blueprint\BPW\CardInstance\BPW_DragWidget.ts
  * @Description: 卡片的img、拖拽等功能，不负责数据和战斗逻辑。
  */
@@ -60,6 +60,7 @@ export class SampleWidget{
             return;
         }
         this.img.SetBrushFromSoftTexture(def.img);
+        console.log("[SampleWidget].Init:Success, cid = ", def.cid, "def.img = ", def.img.Get().GetName());
     }
 
     OnMouseEnter(MyGeometry: UE.Geometry, MouseEvent: UE.PointerEvent) : void{

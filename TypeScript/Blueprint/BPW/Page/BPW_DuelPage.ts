@@ -1,8 +1,8 @@
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
- * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-15 16:44:58
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-17 12:10:48
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,13 +22,14 @@ import { BP_CardMovementComponent } from "../CardInstance/BP_CardMovementCompone
 import { SystemManager } from '../../../SubSystem/SystemManager';
 import { SystemEnum } from '../../../SubSystem/SystemName';
 import { CardDef, CardInstance } from '../CardInstance/CardInstance';
-
+import { BlueprintMixin } from '../../../Utils/mixinUtils';
 
 console.log("[BPW_DuelPage] Start");
-const uclass = UE.Class.Load(BlueprintPath.BPW_DuelPage);
-const jsclass = blueprint.tojs(uclass);
+// const uclass = UE.Class.Load(BlueprintPath.BPW_DuelPage);
+// const jsclass = blueprint.tojs(uclass);
 
 export interface DuelPage extends UE.Game.Blueprint.BPW.Page.BPW_DuelPage.BPW_DuelPage_C {}
+@BlueprintMixin(BlueprintPath.BPW_DuelPage)
 export class DuelPage {
 
     private mCardMovementComponent: BP_CardMovementComponent | null = null;
@@ -51,8 +52,9 @@ export class DuelPage {
             // this.mCardMovementComponent?.AddCard();
             const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
             let cid = 1;
-            Op?.DrawCardByCid( cid++ % 2);
-            console.log("[DuelPage].TestBtn1 Clicked, cid = ", cid - 1);
+            Op?.DrawCardByCid(cid);
+            // console.log("[DuelPage].TestBtn1 Op = ", Op);
+            console.log("[DuelPage].TestBtn1 Clicked, cid = ", cid);
         });
 
         this.StartGameBtn.OnClicked.Add(() => {
@@ -82,12 +84,11 @@ export class DuelPage {
     AddCardToHand(def: CardDef) {
         const card = new CardInstance(def);
         card.InitSample();
-
-
+        this.mCardMovementComponent?.AddCard(card);
     }
 
 }
 
 
-blueprint.mixin(jsclass, DuelPage);
+// blueprint.mixin(jsclass, DuelPage);
 console.log("[BPW_DuelPage].Finish")

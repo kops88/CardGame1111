@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,8 +13,8 @@ exports.DuelPage = void 0;
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
- * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-15 16:44:58
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-17 12:10:48
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -27,10 +33,9 @@ const Path_1 = require("../../Path");
 const SystemManager_1 = require("../../../SubSystem/SystemManager");
 const SystemName_1 = require("../../../SubSystem/SystemName");
 const CardInstance_1 = require("../CardInstance/CardInstance");
+const mixinUtils_1 = require("../../../Utils/mixinUtils");
 console.log("[BPW_DuelPage] Start");
-const uclass = ue_1.default.Class.Load(Path_1.BlueprintPath.BPW_DuelPage);
-const jsclass = puerts_1.blueprint.tojs(uclass);
-class DuelPage {
+let DuelPage = class DuelPage {
     mCardMovementComponent = null;
     Construct() {
         SystemManager_1.SystemManager.instance?.SetHandZone(this);
@@ -46,8 +51,9 @@ class DuelPage {
             // this.mCardMovementComponent?.AddCard();
             const Op = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem);
             let cid = 1;
-            Op?.DrawCardByCid(cid++ % 2);
-            console.log("[DuelPage].TestBtn1 Clicked, cid = ", cid - 1);
+            Op?.DrawCardByCid(cid);
+            // console.log("[DuelPage].TestBtn1 Op = ", Op);
+            console.log("[DuelPage].TestBtn1 Clicked, cid = ", cid);
         });
         this.StartGameBtn.OnClicked.Add(() => {
             console.log("[BPW_DuelPage].StartGameBtn Clicked");
@@ -69,9 +75,13 @@ class DuelPage {
     AddCardToHand(def) {
         const card = new CardInstance_1.CardInstance(def);
         card.InitSample();
+        this.mCardMovementComponent?.AddCard(card);
     }
-}
+};
 exports.DuelPage = DuelPage;
-puerts_1.blueprint.mixin(jsclass, DuelPage);
+exports.DuelPage = DuelPage = __decorate([
+    (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BPW_DuelPage)
+], DuelPage);
+// blueprint.mixin(jsclass, DuelPage);
 console.log("[BPW_DuelPage].Finish");
 //# sourceMappingURL=BPW_DuelPage.js.map
