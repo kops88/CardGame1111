@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-17 12:10:48
+ * @LastEditTime: 2025-11-18 14:44:16
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,8 +25,6 @@ import { CardDef, CardInstance } from '../CardInstance/CardInstance';
 import { BlueprintMixin } from '../../../Utils/mixinUtils';
 
 console.log("[BPW_DuelPage] Start");
-// const uclass = UE.Class.Load(BlueprintPath.BPW_DuelPage);
-// const jsclass = blueprint.tojs(uclass);
 
 export interface DuelPage extends UE.Game.Blueprint.BPW.Page.BPW_DuelPage.BPW_DuelPage_C {}
 @BlueprintMixin(BlueprintPath.BPW_DuelPage)
@@ -59,6 +57,8 @@ export class DuelPage {
 
         this.StartGameBtn.OnClicked.Add(() => {
             console.log("[BPW_DuelPage].StartGameBtn Clicked");
+            const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
+            Op?.UseCard();
             
         });
 
@@ -81,14 +81,13 @@ export class DuelPage {
      * @example GameOperationSystem.DrawCardByCid
      * 
      */
-    AddCardToHand(def: CardDef) {
+    AddCardToHand(def: CardDef): CardInstance {
         const card = new CardInstance(def);
         card.InitSample();
         this.mCardMovementComponent?.AddCard(card);
+        return card;
     }
 
 }
 
-
-// blueprint.mixin(jsclass, DuelPage);
 console.log("[BPW_DuelPage].Finish")

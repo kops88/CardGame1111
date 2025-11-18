@@ -12,10 +12,13 @@ exports.BlueprintPath = {
     // Table
     CardDef: "/Game/Blueprint/Table/CardDef.CardDef",
     BP_CardMovementComponent: "/Game/Blueprint/BPW/Page/BP_CardMovementComponentt.BP_CardMovementComponentt_C",
-    // CardActionBase
-    BP_OnTrigger: "Game/Blueprint/CardAction/CardActionBase/BP_OnTrigger.BP_OnTrigger_C",
-    BP_OnAction: "Game/Blueprint/CardAction/CardActionBase/BP_OnAction.BP_OnAction_C",
-    BP_OnEnd: "Game/Blueprint/CardAction/CardActionBase/BP_OnEnd.BP_OnEnd_C",
+    // CardAction
+    BP_OnTrigger: "/Game/Blueprint/CardAction/OnTrigger/BP_OnTrigger.BP_OnTrigger_C",
+    BP_OnAction: "/Game/Blueprint/CardAction/OnAction/BP_OnAction.BP_OnAction_C",
+    BP_OnEnd: "/Game/Blueprint/CardAction/OnEnd/BP_OnEnd.BP_OnEnd_C",
+    // ActionExtend
+    print1: '/Game/Blueprint/CardAction/OnAction/print1.print1',
+    print2: '/Game/Blueprint/CardAction/OnAction/print2.print2',
 };
 console.log("[Path].Finish");
 //# sourceMappingURL=Path.js.map

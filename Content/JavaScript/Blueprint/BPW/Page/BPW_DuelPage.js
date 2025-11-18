@@ -14,7 +14,7 @@ exports.DuelPage = void 0;
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-17 12:10:48
+ * @LastEditTime: 2025-11-18 14:44:16
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -57,6 +57,8 @@ let DuelPage = class DuelPage {
         });
         this.StartGameBtn.OnClicked.Add(() => {
             console.log("[BPW_DuelPage].StartGameBtn Clicked");
+            const Op = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem);
+            Op?.UseCard();
         });
     }
     ;
@@ -76,12 +78,12 @@ let DuelPage = class DuelPage {
         const card = new CardInstance_1.CardInstance(def);
         card.InitSample();
         this.mCardMovementComponent?.AddCard(card);
+        return card;
     }
 };
 exports.DuelPage = DuelPage;
 exports.DuelPage = DuelPage = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BPW_DuelPage)
 ], DuelPage);
-// blueprint.mixin(jsclass, DuelPage);
 console.log("[BPW_DuelPage].Finish");
 //# sourceMappingURL=BPW_DuelPage.js.map

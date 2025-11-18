@@ -103,9 +103,7 @@ export class BP_CardMovementComponent {
             && this.SampleList.length > 0 
             && this.TargetPos.Num() === this.SampleList.length
         ) {
-            console.log("[CardMovementComponent].ReceiveTick, bStartInterp = true");
             for(let idx = 0; idx < this.SampleList.length; idx++) {
-                console.log("[CardMovementComponent].ReceiveTick, idx = ", idx);
                 if(this.bDragging && this.DraggedCard === this.SampleList[idx]) {
                     continue;
                 }
@@ -215,7 +213,6 @@ export class BP_CardMovementComponent {
      * @param card 
      */
     private OnMouseHover(card: UE.UserWidget): void {
-        console.log("[CardMovementComponent].OnMouseHover, incard = ", card);
         const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
         const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
 
@@ -227,7 +224,6 @@ export class BP_CardMovementComponent {
             this.TargetPos.Add(new UE.Vector2D(0, 0));
         }
 
-        console.log("[CardMovementComponent].OnMouseHover, HoverIdx = ", HoverIdx);
 
         for(let idx = 0; idx < this.SampleList.length; idx++) {
             if(idx === HoverIdx) {
@@ -243,12 +239,10 @@ export class BP_CardMovementComponent {
         if(!this.bDragging){
             this.StartInterp();
         }
-        console.log("[CardMovementComponent].OnMouseHover, End"); 
     }
 
     private OnMouseHoverEnd(card: UE.UserWidget): void {
 
-        console.log("[CardMovementComponent].OnMouseUnHover, incard = ", card);
         const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
         const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
         this.TargetPos.Empty();
@@ -289,7 +283,6 @@ export class BP_CardMovementComponent {
     private CalculateCardPosByIdx(idx: number): number {
         const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
         let result  = ViewPortSize.X / 2 + (idx - (this.SampleList.length - 1) / 2) * this.Interval;
-        console.log("[CardMovementComponent].CalculateCardPosByIdx, result = ", result);
         return result;
     }
 
