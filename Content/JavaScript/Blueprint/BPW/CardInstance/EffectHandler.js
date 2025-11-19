@@ -1,19 +1,16 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EffectHandler = void 0;
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-18 10:33:39
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-18 18:12:23
+ * @LastEditTime: 2025-11-19 15:42:47
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\CardInstance\EffectHandler.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 console.log('[EffectHandler] head');
-const ue_1 = __importDefault(require("ue"));
+const SystemManager_1 = require("../../../SubSystem/SystemManager");
 class EffectHandler {
     OnTrigger = undefined;
     OnActions = [];
@@ -23,15 +20,16 @@ class EffectHandler {
      */
     constructor(def) {
         // 遍历每组效果
-        for (let effect of def.effects) {
+        for (let effect of def.Effects) {
             // 分别加载 trigger action end
-            this.OnTrigger = ue_1.default.NewObject(effect.OnTrigger);
+            this.OnTrigger = SystemManager_1.FunctionLibrary.CreateAction(effect.OnTrigger);
             let i = 0;
             for (let action of effect.OnActions) {
-                this.OnActions.push(ue_1.default.NewObject(action));
+                let actionIns = SystemManager_1.FunctionLibrary.CreateAction(action);
+                this.OnActions.push(actionIns);
                 console.log("[EffectHandler].constructor: OnAction = ", this.OnActions[i++].GetName());
             }
-            this.OnEnd = ue_1.default.NewObject(effect.OnEnd);
+            this.OnEnd = SystemManager_1.FunctionLibrary.CreateAction(effect.OnEnd);
             if (!this.OnTrigger || !this.OnActions || !this.OnEnd) {
                 // 打印不代表错误。
                 console.log("[EffectHandler].constructor: Error: OnTrigger or OnAction or OnEnd is null");

@@ -14,9 +14,12 @@ const EventSystem_1 = require("../../../SubSystem/EventSystem");
 let OnTrigger = class OnTrigger {
     mOnAction = new EventSystem_1.TsDelegate();
     params = new Map();
+    ReceiveBeginPlay() {
+        console.log("[EffectTrigger].ReceiveBeginPlay");
+        this.mOnAction = new EventSystem_1.TsDelegate();
+    }
     BindAction(action) {
         console.log("[EffectTrigger].BindAction");
-        this.mOnAction = new EventSystem_1.TsDelegate();
         this.mOnAction.Add(action.executeAction);
     }
     executeTrigger() {
@@ -39,13 +42,16 @@ exports.OnTrigger = OnTrigger = __decorate([
 let OnAction = class OnAction {
     mOnEnd = new EventSystem_1.TsDelegate();
     params = new Map();
+    ReceiveBeginPlay() {
+        console.log("[EffectTrigger].ReceiveBeginPlay");
+        this.mOnEnd = new EventSystem_1.TsDelegate();
+    }
     BindEnd(end) {
         console.log("[EffectTrigger].BindEnd");
-        this.mOnEnd = new EventSystem_1.TsDelegate();
         this.mOnEnd.Add(end.executeEnd);
     }
     executeAction() {
-        console.log("[EffectTrigger].executeAction");
+        console.log("[ActionExecute].executeAction");
     }
     SetParams(iparams) {
         this.params = iparams;

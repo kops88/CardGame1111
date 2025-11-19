@@ -48,7 +48,7 @@ export class SampleWidget{
             return;
         }
         this.img.SetBrushFromSoftTexture(def.img);
-        console.log("[SampleWidget].Init:Success, cid = ", def.cid, "def.img = ", def.img.Get().GetName());
+        // console.log("[SampleWidget].Init:Success, cid = ", def.cid, "def.img = ", def.img.Get().GetName()); //GetName 在每次打开UE 的第一次运行会报错
     }
 
     /**

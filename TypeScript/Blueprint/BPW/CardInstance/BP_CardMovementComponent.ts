@@ -25,6 +25,11 @@ export class BP_CardMovementComponent {
     private SampleList: SampleWidget[] = [];
     /** 鼠标点击卡牌时的偏移 */
     private DragOffset: UE.Vector2D = new UE.Vector2D(0, 0);
+    private _ZoneX: number = 0;
+
+    set ZoneX(x: number) {
+        this._ZoneX = x;
+    }
 
     ReceiveBeginPlay() : void {
         console.log("[CardMovementComponent].ReceiveBeginPlay");
@@ -118,6 +123,14 @@ export class BP_CardMovementComponent {
                 let length = this.SampleList.length;
                 if(this.JudgeFinishInterp()) {
                     this.bStartInterp = false;
+                    let cx = this.SampleList[0].RenderTransform.Translation.X;
+                    let cy = this.SampleList[0].RenderTransform.Translation.Y;
+                    let ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
+                    console.log("[CardMovementComponent].ProcessInterp, cx = ", cx, ", cy = ", cy);
+                    console.log("[CardMovementComponent].ProcessInterp, Vx = ", ViewPortSize.X, ", Vy = ", ViewPortSize.Y);
+                    
+
+
                 }
             }
         }
@@ -229,12 +242,15 @@ export class BP_CardMovementComponent {
             if(idx === HoverIdx) {
                 let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High - 50);
                 this.TargetPos.Set(idx, pos);
+                console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
+                
                 continue;
             }
             const Direction: number = idx > HoverIdx ? 1 : -1;
             // -50 是向上的偏移距离
             let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, 2 * WindowCenter.Y - this.High);
             this.TargetPos.Set(idx, pos);
+                console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
         }
         if(!this.bDragging){
             this.StartInterp();
@@ -281,8 +297,11 @@ export class BP_CardMovementComponent {
      * @returns 返回卡牌的 x 目标位置
      */
     private CalculateCardPosByIdx(idx: number): number {
+        console.log("[CardMovementComponent].CalculateCardPosByIdx, idx = ", idx);
+        
         const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-        let result  = ViewPortSize.X / 2 + (idx - (this.SampleList.length - 1) / 2) * this.Interval;
+        // const halfCardX = this.SampleList[0]. 
+        let result  = ViewPortSize.X / 2 + (idx - (this.SampleList.length - 1) / 2) * this.Interval ;
         return result;
     }
 

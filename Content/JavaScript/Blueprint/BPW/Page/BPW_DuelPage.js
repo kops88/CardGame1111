@@ -42,6 +42,7 @@ let DuelPage = class DuelPage {
         console.log("[BPW_DuelPage].Construct, instance = ", SystemManager_1.SystemManager.instance);
         this.InitMovementComponent();
         this.RegisterEvents();
+        // this.HandCanvas.Slot.
     }
     RegisterEvents() {
         console.log("[BPW_DuelPage].RegisterEvents");

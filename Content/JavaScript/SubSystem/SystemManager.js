@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SystemManager = void 0;
+exports.FunctionLibrary = exports.SystemManager = void 0;
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 14:50:41
@@ -10,6 +13,7 @@ exports.SystemManager = void 0;
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 console.log('[SystemManager] head');
+const ue_1 = __importDefault(require("ue"));
 const SystemName_1 = require("./SystemName");
 const AssetSystem_1 = require("./AssetSystem");
 const GameOperationSystem_1 = require("./GameOperationSystem");
@@ -85,5 +89,16 @@ class SystemManager {
     }
 }
 exports.SystemManager = SystemManager;
+class FunctionLibrary {
+    /**
+     *@description  使用 BeginDeferredActorSpawnFromClass 创建 Actor
+     */
+    static CreateAction(ActorClass) {
+        let actor = ue_1.default.GameplayStatics.BeginDeferredActorSpawnFromClass(SystemManager.GetWorld(), ActorClass, ue_1.default.Transform.Identity);
+        ue_1.default.GameplayStatics.FinishSpawningActor(actor, ue_1.default.Transform.Identity);
+        return actor;
+    }
+}
+exports.FunctionLibrary = FunctionLibrary;
 console.log("[SystemManager].Finish");
 //# sourceMappingURL=SystemManager.js.map

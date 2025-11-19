@@ -105,4 +105,24 @@ export class SystemManager {
 
 }
 
+
+export class FunctionLibrary { 
+
+    /**
+     *@description  使用 BeginDeferredActorSpawnFromClass 创建 Actor 
+     */
+    static CreateAction(ActorClass: $Nullable<UE.Class>): UE.Actor {
+        let actor = UE.GameplayStatics.BeginDeferredActorSpawnFromClass(SystemManager.GetWorld(), ActorClass, UE.Transform.Identity);
+        UE.GameplayStatics.FinishSpawningActor(actor, UE.Transform.Identity);
+        return actor;
+    }
+
+}
+
+
+
+
+
+
+
 console.log("[SystemManager].Finish");

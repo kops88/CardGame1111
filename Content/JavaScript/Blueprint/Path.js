@@ -17,8 +17,8 @@ exports.BlueprintPath = {
     BP_OnAction: "/Game/Blueprint/CardAction/OnAction/BP_OnAction.BP_OnAction_C",
     BP_OnEnd: "/Game/Blueprint/CardAction/OnEnd/BP_OnEnd.BP_OnEnd_C",
     // ActionExtend
-    print1: '/Game/Blueprint/CardAction/OnAction/print1.print1',
-    print2: '/Game/Blueprint/CardAction/OnAction/print2.print2',
+    print1: '/Game/Blueprint/CardAction/OnAction/print1.print1_C',
+    print2: '/Game/Blueprint/CardAction/OnAction/print2.print2_C',
 };
 console.log("[Path].Finish");
 //# sourceMappingURL=Path.js.map

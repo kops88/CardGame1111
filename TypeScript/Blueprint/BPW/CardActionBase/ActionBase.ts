@@ -1,7 +1,6 @@
 console.log("[7758]:  ActionBase.ts start");
-import UE, { SquareDataflowNode } from 'ue';
+import UE from 'ue';
 import { BlueprintPath } from '../../Path'
-import { blueprint } from 'puerts';
 import { BlueprintMixin } from '../../../Utils/mixinUtils';
 import { TsDelegate } from '../../../SubSystem/EventSystem';
 
@@ -16,9 +15,13 @@ export class OnTrigger {
     private mOnAction: TsDelegate<() => void> = new TsDelegate<() => void>();
     private params: Map<string, string> = new Map<string, string>();
     
+    ReceiveBeginPlay() : void {
+        console.log("[EffectTrigger].ReceiveBeginPlay");
+        this.mOnAction= new TsDelegate<() => void>();
+    }
+
     BindAction(action: OnAction) {
         console.log("[EffectTrigger].BindAction");
-        this.mOnAction = new TsDelegate<() => void>();
         this.mOnAction.Add(action.executeAction);
     }
 
@@ -44,14 +47,18 @@ export class OnAction {
     private mOnEnd: TsDelegate<() => void> = new TsDelegate<() => void>();
     private params: Map<string, string> = new Map<string, string>();
 
+    ReceiveBeginPlay() { 
+        console.log("[EffectTrigger].ReceiveBeginPlay");
+        this.mOnEnd= new TsDelegate<() => void>();
+    }
+
     BindEnd(end: OnEnd) {
         console.log("[EffectTrigger].BindEnd");
-        this.mOnEnd = new TsDelegate<() => void>();
         this.mOnEnd.Add(end.executeEnd);        
     } 
     
     executeAction() { 
-        console.log("[EffectTrigger].executeAction");
+        console.log("[ActionExecute].executeAction");
 
     }
 
@@ -68,9 +75,9 @@ export class OnEnd {
     
     private params: Map<string, string> = new Map<string, string>();
 
+    
     executeEnd() {
         console.log("[EffectTrigger].executeEnd");
-
     }
 
     SetParams(iparams: Map<string, string>) {

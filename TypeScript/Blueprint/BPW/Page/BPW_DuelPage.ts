@@ -38,6 +38,7 @@ export class DuelPage {
         this.InitMovementComponent();
 
         this.RegisterEvents();
+        // this.HandCanvas.Slot.
     }
 
 
