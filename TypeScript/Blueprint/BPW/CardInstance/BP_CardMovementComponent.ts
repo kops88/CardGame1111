@@ -1,18 +1,16 @@
 console.log("[CardMovementComponent].Start")
 import UE from 'ue';
-import { blueprint } from 'puerts';
 import { BlueprintPath } from '../../Path';
-// import "Blueprint/BPW/CardInstance/BPW_CardInstance";
 import { SampleWidget  } from './BPW_SampleWidget';
 import { CardInstance } from './CardInstance';
+import { SystemManager } from '../../../SubSystem/SystemManager';
+import { BlueprintMixin } from '../../../Utils/mixinUtils';
 
 
-
-const uComponent = UE.Class.Load(BlueprintPath.BP_CardMovementComponent);
-const jsComponent = blueprint.tojs(uComponent);
 
 
 export interface BP_CardMovementComponent extends UE.Game.Blueprint.BPW.Page.BP_CardMovementComponentt.BP_CardMovementComponentt_C {}
+@BlueprintMixin(BlueprintPath.BP_CardMovementComponent)
 export class BP_CardMovementComponent {
 
     /** 是否正在拖拽*/
@@ -25,11 +23,19 @@ export class BP_CardMovementComponent {
     private SampleList: SampleWidget[] = [];
     /** 鼠标点击卡牌时的偏移 */
     private DragOffset: UE.Vector2D = new UE.Vector2D(0, 0);
-    private _ZoneX: number = 0;
 
-    set ZoneX(x: number) {
-        this._ZoneX = x;
+
+    /**
+     * @description 初始化数据
+     */
+    private InitData(): void { 
+        this.SampleList = [];
+        this.DragOffset = new UE.Vector2D(0, 0);
+        this.bStartInterp = false;
+        this.TargetPos.Add(new UE.Vector2D(0, 0));
+        console.log("[CardMovementComponent].InitData, bStartInterp = ", this.bStartInterp);
     }
+
 
     ReceiveBeginPlay() : void {
         console.log("[CardMovementComponent].ReceiveBeginPlay");
@@ -43,56 +49,11 @@ export class BP_CardMovementComponent {
 
     
     /**
-     * @description 获取CardInstance 的 SampleWidget，添加到 SampleList，设置位置，开始插值
-     */
-    AddCard(cardInstance: CardInstance): void {
-        console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
-
-        // const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
-
-        let mSampleWidget = cardInstance.GetSample();
-        if(mSampleWidget)
-        {
-            mSampleWidget.AddToViewport();
-            this.RegisterEvents(mSampleWidget);
-            this.SampleList.push(mSampleWidget);
-
-            let transform = new UE.WidgetTransform();
-            const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-            const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
-            transform.Translation.X = 200;
-            transform.Translation.Y = 2 * WindowCenter.Y - this.High;
-            mSampleWidget.SetRenderTransform(transform);
-            console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
-
-            // 计算目标位置
-            this.TargetPos.Empty();
-            for(let idx = 0; idx < this.SampleList.length; idx++){
-                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High);
-                this.TargetPos.Add(pos);
-            }
-        }
-        this.StartInterp();
-    }
-    
-    /**
-     * @description 初始化数据
-     */
-    private InitData(): void { 
-        this.SampleList = [];
-        this.DragOffset = new UE.Vector2D(0, 0);
-        this.bStartInterp = false;
-        this.TargetPos.Add(new UE.Vector2D(0, 0));
-        console.log("[CardMovementComponent].InitData, bStartInterp = ", this.bStartInterp);
-    }
-
-    /**
      * @description 处理鼠标拖拽卡牌, Tick
      */
     private ProcessDragCard() {
         if(this.DraggedCard) {
             let MousePos: UE.Vector2D = UE.WidgetLayoutLibrary.GetMousePositionOnViewport(this.GetWorld())
-        
             let transform = new UE.WidgetTransform();
             transform.Translation.X = MousePos.X - this.DragOffset.X;
             transform.Translation.Y = MousePos.Y - this.DragOffset.Y;
@@ -118,19 +79,11 @@ export class BP_CardMovementComponent {
                 transform.Translation.X = TargetPos.X;
                 transform.Translation.Y = TargetPos.Y;
                 this.SampleList[idx].SetRenderTransform(transform);
-                
+
                 // 判断是否移动完成，如果完成，则设置bStartInterp = false
                 let length = this.SampleList.length;
                 if(this.JudgeFinishInterp()) {
                     this.bStartInterp = false;
-                    let cx = this.SampleList[0].RenderTransform.Translation.X;
-                    let cy = this.SampleList[0].RenderTransform.Translation.Y;
-                    let ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-                    console.log("[CardMovementComponent].ProcessInterp, cx = ", cx, ", cy = ", cy);
-                    console.log("[CardMovementComponent].ProcessInterp, Vx = ", ViewPortSize.X, ", Vy = ", ViewPortSize.Y);
-                    
-
-
                 }
             }
         }
@@ -155,11 +108,9 @@ export class BP_CardMovementComponent {
         return true;
     }
 
-
-
-
-    /**
-     * @description 注册点击、悬挂事件
+    
+     /**
+     * AddCard时，注册点击、悬挂事件
      * @param card 
      */
     private RegisterEvents(card: SampleWidget): void {
@@ -190,6 +141,8 @@ export class BP_CardMovementComponent {
             }
         );
     }
+
+     
 
     /**
      * @description 按下后，设置 bDragging 和 DraggedCard 以及 DragOffset，用于 tick 拖拽。 
@@ -226,9 +179,6 @@ export class BP_CardMovementComponent {
      * @param card 
      */
     private OnMouseHover(card: UE.UserWidget): void {
-        const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-        const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
-
         this.TargetPos.Empty();
         const HoverIdx = this.SampleList.indexOf(card as SampleWidget);
 
@@ -237,10 +187,9 @@ export class BP_CardMovementComponent {
             this.TargetPos.Add(new UE.Vector2D(0, 0));
         }
 
-
         for(let idx = 0; idx < this.SampleList.length; idx++) {
             if(idx === HoverIdx) {
-                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High - 50);
+                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(true));
                 this.TargetPos.Set(idx, pos);
                 console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
                 
@@ -248,7 +197,7 @@ export class BP_CardMovementComponent {
             }
             const Direction: number = idx > HoverIdx ? 1 : -1;
             // -50 是向上的偏移距离
-            let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, 2 * WindowCenter.Y - this.High);
+            let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, this.CalculateCardPosY(false));
             this.TargetPos.Set(idx, pos);
                 console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
         }
@@ -258,9 +207,6 @@ export class BP_CardMovementComponent {
     }
 
     private OnMouseHoverEnd(card: UE.UserWidget): void {
-
-        const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-        const WindowCenter = new UE.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
         this.TargetPos.Empty();
 
         // 保证 TargetPos 足够多的元素。
@@ -269,14 +215,14 @@ export class BP_CardMovementComponent {
         }   
 
         for(let idx = 0; idx < this.SampleList.length; idx++) {
-            let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High);
+            let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(false));
             this.TargetPos.Set(idx, pos);
         }
         if(!this.bDragging){
             this.StartInterp();
         }
     }
-
+    
     /**
      * @description 开始插值
      */
@@ -292,21 +238,54 @@ export class BP_CardMovementComponent {
     }
 
     /**
-     * @description UnHover 时，计算卡牌的目标位置
+     * @description 获取CardInstance 的 SampleWidget，添加到 SampleList，设置位置，开始插值
+     */
+    AddCard(cardInstance: CardInstance): void {
+        console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
+
+        let mSampleWidget = cardInstance.GetSample();
+        if(mSampleWidget)
+        {
+            mSampleWidget.AddToViewport();
+            this.RegisterEvents(mSampleWidget);
+            this.SampleList.push(mSampleWidget);
+            let transform = new UE.WidgetTransform();
+            transform.Translation.X = 200;
+            transform.Translation.Y = this.CalculateCardPosY(false);
+            mSampleWidget.SetRenderTransform(transform);
+            console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
+
+            // 计算目标位置
+            this.TargetPos.Empty();
+            for(let idx = 0; idx < this.SampleList.length; idx++){
+                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) , this.CalculateCardPosY(false));
+                this.TargetPos.Add(pos);
+            }
+        }
+        this.StartInterp();
+    }
+    
+   
+
+    /**
+     * @description 计算卡牌的目标位置
      * @param idx 在 CardSample 中的序号
      * @returns 返回卡牌的 x 目标位置
      */
     private CalculateCardPosByIdx(idx: number): number {
         console.log("[CardMovementComponent].CalculateCardPosByIdx, idx = ", idx);
-        
-        const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
-        // const halfCardX = this.SampleList[0]. 
-        let result  = ViewPortSize.X / 2 + (idx - (this.SampleList.length - 1) / 2) * this.Interval ;
+        let ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
+        let DPIScale = UE.WidgetLayoutLibrary.GetViewportScale(SystemManager.GetWorld());
+        let result  = ViewPortSize.X / 2 / DPIScale + (idx - (this.SampleList.length - 1) / 2) * this.Interval - 100 * DPIScale;
         return result;
+    }
+
+    private CalculateCardPosY(IsSelected: boolean): number {
+        let DPIScale = UE.WidgetLayoutLibrary.GetViewportScale(SystemManager.GetWorld());
+        const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
+        let res = ViewPortSize.Y / DPIScale - this.High  - (IsSelected ? 50 : 0);
+        return res;
     }
 
 
 }
-
-blueprint.mixin(jsComponent, BP_CardMovementComponent);
-console.log("[CardMovementComponent].Finish")

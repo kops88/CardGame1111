@@ -42,6 +42,14 @@ class GameOperationSystem {
             }
         }
     }
+    /**
+     * 统一的获取手卡数量函数
+     */
+    GetHandCardsNum() {
+        if (!this.HandZone)
+            return 0;
+        return this.HandZone?.GetHandCardsNum();
+    }
     UseCard() {
         this.CardList[0].Use();
     }

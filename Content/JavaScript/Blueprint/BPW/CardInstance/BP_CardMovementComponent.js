@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -6,11 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BP_CardMovementComponent = void 0;
 console.log("[CardMovementComponent].Start");
 const ue_1 = __importDefault(require("ue"));
-const puerts_1 = require("puerts");
 const Path_1 = require("../../Path");
-const uComponent = ue_1.default.Class.Load(Path_1.BlueprintPath.BP_CardMovementComponent);
-const jsComponent = puerts_1.blueprint.tojs(uComponent);
-class BP_CardMovementComponent {
+const SystemManager_1 = require("../../../SubSystem/SystemManager");
+const mixinUtils_1 = require("../../../Utils/mixinUtils");
+let BP_CardMovementComponent = class BP_CardMovementComponent {
     /** 是否正在拖拽*/
     bDragging = false;
     /** 是否开始插值 */
@@ -21,45 +26,6 @@ class BP_CardMovementComponent {
     SampleList = [];
     /** 鼠标点击卡牌时的偏移 */
     DragOffset = new ue_1.default.Vector2D(0, 0);
-    _ZoneX = 0;
-    set ZoneX(x) {
-        this._ZoneX = x;
-    }
-    ReceiveBeginPlay() {
-        console.log("[CardMovementComponent].ReceiveBeginPlay");
-        this.InitData();
-    }
-    ReceiveTick(DeltaSeconds) {
-        this.ProcessDragCard();
-        this.ProcessInterp(DeltaSeconds);
-    }
-    /**
-     * @description 获取CardInstance 的 SampleWidget，添加到 SampleList，设置位置，开始插值
-     */
-    AddCard(cardInstance) {
-        console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
-        // const CardClass = UE.Class.Load(BlueprintPath.BPW_SampleWidget);
-        let mSampleWidget = cardInstance.GetSample();
-        if (mSampleWidget) {
-            mSampleWidget.AddToViewport();
-            this.RegisterEvents(mSampleWidget);
-            this.SampleList.push(mSampleWidget);
-            let transform = new ue_1.default.WidgetTransform();
-            const ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
-            const WindowCenter = new ue_1.default.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
-            transform.Translation.X = 200;
-            transform.Translation.Y = 2 * WindowCenter.Y - this.High;
-            mSampleWidget.SetRenderTransform(transform);
-            console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
-            // 计算目标位置
-            this.TargetPos.Empty();
-            for (let idx = 0; idx < this.SampleList.length; idx++) {
-                let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High);
-                this.TargetPos.Add(pos);
-            }
-        }
-        this.StartInterp();
-    }
     /**
      * @description 初始化数据
      */
@@ -69,6 +35,14 @@ class BP_CardMovementComponent {
         this.bStartInterp = false;
         this.TargetPos.Add(new ue_1.default.Vector2D(0, 0));
         console.log("[CardMovementComponent].InitData, bStartInterp = ", this.bStartInterp);
+    }
+    ReceiveBeginPlay() {
+        console.log("[CardMovementComponent].ReceiveBeginPlay");
+        this.InitData();
+    }
+    ReceiveTick(DeltaSeconds) {
+        this.ProcessDragCard();
+        this.ProcessInterp(DeltaSeconds);
     }
     /**
      * @description 处理鼠标拖拽卡牌, Tick
@@ -103,11 +77,6 @@ class BP_CardMovementComponent {
                 let length = this.SampleList.length;
                 if (this.JudgeFinishInterp()) {
                     this.bStartInterp = false;
-                    let cx = this.SampleList[0].RenderTransform.Translation.X;
-                    let cy = this.SampleList[0].RenderTransform.Translation.Y;
-                    let ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
-                    console.log("[CardMovementComponent].ProcessInterp, cx = ", cx, ", cy = ", cy);
-                    console.log("[CardMovementComponent].ProcessInterp, Vx = ", ViewPortSize.X, ", Vy = ", ViewPortSize.Y);
                 }
             }
         }
@@ -131,9 +100,9 @@ class BP_CardMovementComponent {
         return true;
     }
     /**
-     * @description 注册点击、悬挂事件
-     * @param card
-     */
+    * AddCard时，注册点击、悬挂事件
+    * @param card
+    */
     RegisterEvents(card) {
         // 注册点击卡牌开始拖拽事件
         console.log("[CardMovementComponent].RegisterEvents");
@@ -183,8 +152,6 @@ class BP_CardMovementComponent {
      * @param card
      */
     OnMouseHover(card) {
-        const ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
-        const WindowCenter = new ue_1.default.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
         this.TargetPos.Empty();
         const HoverIdx = this.SampleList.indexOf(card);
         // 保证 TargetPos 足够多的元素。
@@ -193,14 +160,14 @@ class BP_CardMovementComponent {
         }
         for (let idx = 0; idx < this.SampleList.length; idx++) {
             if (idx === HoverIdx) {
-                let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High - 50);
+                let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(true));
                 this.TargetPos.Set(idx, pos);
                 console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
                 continue;
             }
             const Direction = idx > HoverIdx ? 1 : -1;
             // -50 是向上的偏移距离
-            let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, 2 * WindowCenter.Y - this.High);
+            let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, this.CalculateCardPosY(false));
             this.TargetPos.Set(idx, pos);
             console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
         }
@@ -209,15 +176,13 @@ class BP_CardMovementComponent {
         }
     }
     OnMouseHoverEnd(card) {
-        const ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
-        const WindowCenter = new ue_1.default.Vector2D(ViewPortSize.X / 2, ViewPortSize.Y / 2);
         this.TargetPos.Empty();
         // 保证 TargetPos 足够多的元素。
         while (this.TargetPos.Num() < this.SampleList.length) {
             this.TargetPos.Add(new ue_1.default.Vector2D(0, 0));
         }
         for (let idx = 0; idx < this.SampleList.length; idx++) {
-            let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), 2 * WindowCenter.Y - this.High);
+            let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(false));
             this.TargetPos.Set(idx, pos);
         }
         if (!this.bDragging) {
@@ -237,19 +202,50 @@ class BP_CardMovementComponent {
         this.bStartInterp = false;
     }
     /**
-     * @description UnHover 时，计算卡牌的目标位置
+     * @description 获取CardInstance 的 SampleWidget，添加到 SampleList，设置位置，开始插值
+     */
+    AddCard(cardInstance) {
+        console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand");
+        let mSampleWidget = cardInstance.GetSample();
+        if (mSampleWidget) {
+            mSampleWidget.AddToViewport();
+            this.RegisterEvents(mSampleWidget);
+            this.SampleList.push(mSampleWidget);
+            let transform = new ue_1.default.WidgetTransform();
+            transform.Translation.X = 200;
+            transform.Translation.Y = this.CalculateCardPosY(false);
+            mSampleWidget.SetRenderTransform(transform);
+            console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
+            // 计算目标位置
+            this.TargetPos.Empty();
+            for (let idx = 0; idx < this.SampleList.length; idx++) {
+                let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(false));
+                this.TargetPos.Add(pos);
+            }
+        }
+        this.StartInterp();
+    }
+    /**
+     * @description 计算卡牌的目标位置
      * @param idx 在 CardSample 中的序号
      * @returns 返回卡牌的 x 目标位置
      */
     CalculateCardPosByIdx(idx) {
         console.log("[CardMovementComponent].CalculateCardPosByIdx, idx = ", idx);
-        const ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
-        // const halfCardX = this.SampleList[0]. 
-        let result = ViewPortSize.X / 2 + (idx - (this.SampleList.length - 1) / 2) * this.Interval;
+        let ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
+        let DPIScale = ue_1.default.WidgetLayoutLibrary.GetViewportScale(SystemManager_1.SystemManager.GetWorld());
+        let result = ViewPortSize.X / 2 / DPIScale + (idx - (this.SampleList.length - 1) / 2) * this.Interval - 100 * DPIScale;
         return result;
     }
-}
+    CalculateCardPosY(IsSelected) {
+        let DPIScale = ue_1.default.WidgetLayoutLibrary.GetViewportScale(SystemManager_1.SystemManager.GetWorld());
+        const ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
+        let res = ViewPortSize.Y / DPIScale - this.High - (IsSelected ? 50 : 0);
+        return res;
+    }
+};
 exports.BP_CardMovementComponent = BP_CardMovementComponent;
-puerts_1.blueprint.mixin(jsComponent, BP_CardMovementComponent);
-console.log("[CardMovementComponent].Finish");
+exports.BP_CardMovementComponent = BP_CardMovementComponent = __decorate([
+    (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BP_CardMovementComponent)
+], BP_CardMovementComponent);
 //# sourceMappingURL=BP_CardMovementComponent.js.map

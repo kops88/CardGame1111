@@ -1,4 +1,12 @@
 "use strict";
+/*
+ * @Author: kops88_cmp 3036435162@qq.com
+ * @Date: 2025-11-12 11:25:07
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-20 18:08:39
+ * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,22 +18,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DuelPage = void 0;
-/*
- * @Author: kops88_cmp 3036435162@qq.com
- * @Date: 2025-11-12 11:25:07
- * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-18 14:44:16
- * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-/*
- * @Author: kops88_cmp 3036435162@qq.com
- * @Date: 2025-11-06 09:49:49
- * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-12 11:41:05
- * @FilePath: \CardGame1102\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 console.log("[BPW_DuelPage] head");
 const ue_1 = __importDefault(require("ue"));
 const puerts_1 = require("puerts");
@@ -37,12 +29,13 @@ const mixinUtils_1 = require("../../../Utils/mixinUtils");
 console.log("[BPW_DuelPage] Start");
 let DuelPage = class DuelPage {
     mCardMovementComponent = null;
+    CardList = [];
     Construct() {
         SystemManager_1.SystemManager.instance?.SetHandZone(this);
         console.log("[BPW_DuelPage].Construct, instance = ", SystemManager_1.SystemManager.instance);
         this.InitMovementComponent();
+        this.CardList = [];
         this.RegisterEvents();
-        // this.HandCanvas.Slot.
     }
     RegisterEvents() {
         console.log("[BPW_DuelPage].RegisterEvents");
@@ -63,12 +56,21 @@ let DuelPage = class DuelPage {
         });
     }
     ;
+    /**
+     * @description 创建Movementcomponent组件
+     */
     InitMovementComponent() {
         const CompClass = ue_1.default.Class.Load(Path_1.BlueprintPath.BP_CardMovementComponent);
         puerts_1.blueprint.load(ue_1.default.Game.Blueprint.BPW.Page.BP_CardMovementComponentt.BP_CardMovementComponentt_C);
         this.mCardMovementComponent = ue_1.default.GameplayStatics.BeginDeferredActorSpawnFromClass(this.GetWorld(), CompClass, ue_1.default.Transform.Identity);
         ue_1.default.GameplayStatics.FinishSpawningActor(this.mCardMovementComponent, ue_1.default.Transform.Identity);
         console.log("[BPW_DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);
+    }
+    /**
+     * 获取手卡数量
+     */
+    GetHandCardsNum() {
+        return this.CardList.length;
     }
     /**
      * @description 创建卡牌、初始化、添加到手牌区
@@ -78,6 +80,7 @@ let DuelPage = class DuelPage {
     AddCardToHand(def) {
         const card = new CardInstance_1.CardInstance(def);
         card.InitSample();
+        this.CardList.push(card);
         this.mCardMovementComponent?.AddCard(card);
         return card;
     }

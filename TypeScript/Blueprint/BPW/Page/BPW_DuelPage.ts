@@ -2,20 +2,13 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-18 14:44:16
+ * @LastEditTime: 2025-11-20 18:08:39
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-/*
- * @Author: kops88_cmp 3036435162@qq.com
- * @Date: 2025-11-06 09:49:49
- * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-12 11:41:05
- * @FilePath: \CardGame1102\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
+
 console.log("[BPW_DuelPage] head")
-import UE, { Class, TArray } from 'ue';
+import UE from 'ue';
 import { blueprint } from 'puerts';
 import { BlueprintPath } from '../../Path';
 import { BP_CardMovementComponent } from "../CardInstance/BP_CardMovementComponent";
@@ -31,14 +24,14 @@ export interface DuelPage extends UE.Game.Blueprint.BPW.Page.BPW_DuelPage.BPW_Du
 export class DuelPage {
 
     private mCardMovementComponent: BP_CardMovementComponent | null = null;
+    private CardList: CardInstance[] = [];
 
     Construct() {
         SystemManager.instance?.SetHandZone(this);
         console.log("[BPW_DuelPage].Construct, instance = ", SystemManager.instance);
         this.InitMovementComponent();
-
+        this.CardList = [];
         this.RegisterEvents();
-        // this.HandCanvas.Slot.
     }
 
 
@@ -62,9 +55,11 @@ export class DuelPage {
             Op?.UseCard();
             
         });
-
     };
 
+    /**
+     * @description 创建Movementcomponent组件
+     */
     private InitMovementComponent() { 
         const CompClass = UE.Class.Load(BlueprintPath.BP_CardMovementComponent);
         blueprint.load(UE.Game.Blueprint.BPW.Page.BP_CardMovementComponentt.BP_CardMovementComponentt_C);
@@ -74,7 +69,14 @@ export class DuelPage {
             UE.Transform.Identity
         ) as unknown as BP_CardMovementComponent;
         UE.GameplayStatics.FinishSpawningActor(this.mCardMovementComponent, UE.Transform.Identity);
-        console.log("[BPW_DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);
+        console.log("[BPW_DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);     
+    }
+
+    /**
+     * 获取手卡数量
+     */
+    GetHandCardsNum(): number { 
+        return this.CardList.length;
     }
 
     /**
@@ -85,6 +87,7 @@ export class DuelPage {
     AddCardToHand(def: CardDef): CardInstance {
         const card = new CardInstance(def);
         card.InitSample();
+        this.CardList.push(card);
         this.mCardMovementComponent?.AddCard(card);
         return card;
     }
