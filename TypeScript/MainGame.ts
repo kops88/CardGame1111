@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-06 09:49:49
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-19 11:42:17
+ * @LastEditTime: 2025-11-21 12:11:33
  * @FilePath: \CardGame1102\TypeScript\MainGame.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%
  */
@@ -11,10 +11,10 @@ console.log("[MainGame].head")
 // import "Blueprint/BPw/CardActionBase/ActionBase" //加这个是因为， actionbase 无法在EffectHandler 中导入。 // 再次注释，因为与ActionExtends 重复。
 import "Blueprint/BPW/CardActionBase/ActionExtends" // 导入其中的mixin。
 import "Blueprint/GameMode/BP_PC";
+import './Blueprint/BPW/Page/BP_CardMovementComponent';
 import "Blueprint/BPW/Page/BPW_DuelPage";
 // import "Blueprint/BPW/CardInstance/BPW_CardInstance";
 import "Blueprint/BPW/CardInstance/BPW_SampleWidget";
-import "Blueprint/BPW/CardInstance/BP_CardMovementComponent"
 console.log("[MainGame].Start")
 
 

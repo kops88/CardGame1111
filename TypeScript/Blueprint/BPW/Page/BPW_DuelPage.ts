@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-20 18:08:39
+ * @LastEditTime: 2025-11-21 14:20:18
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,7 +11,7 @@ console.log("[BPW_DuelPage] head")
 import UE from 'ue';
 import { blueprint } from 'puerts';
 import { BlueprintPath } from '../../Path';
-import { BP_CardMovementComponent } from "../CardInstance/BP_CardMovementComponent";
+import { BP_CardMovementComponent } from './BP_CardMovementComponent';
 import { SystemManager } from '../../../SubSystem/SystemManager';
 import { SystemEnum } from '../../../SubSystem/SystemName';
 import { CardDef, CardInstance } from '../CardInstance/CardInstance';
@@ -24,12 +24,13 @@ export interface DuelPage extends UE.Game.Blueprint.BPW.Page.BPW_DuelPage.BPW_Du
 export class DuelPage {
 
     private mCardMovementComponent: BP_CardMovementComponent | null = null;
+
     private CardList: CardInstance[] = [];
 
     Construct() {
         SystemManager.instance?.SetHandZone(this);
         console.log("[BPW_DuelPage].Construct, instance = ", SystemManager.instance);
-        this.InitMovementComponent();
+        this.CreateMovementComponent();
         this.CardList = [];
         this.RegisterEvents();
     }
@@ -50,9 +51,10 @@ export class DuelPage {
         });
 
         this.StartGameBtn.OnClicked.Add(() => {
-            console.log("[BPW_DuelPage].StartGameBtn Clicked");
-            const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
-            Op?.UseCard();
+            SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem).StartGame();
+            // console.log("[BPW_DuelPage].StartGameBtn Clicked");
+            // const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
+            // Op?.UseCard();
             
         });
     };
@@ -60,7 +62,7 @@ export class DuelPage {
     /**
      * @description 创建Movementcomponent组件
      */
-    private InitMovementComponent() { 
+    private CreateMovementComponent() { 
         const CompClass = UE.Class.Load(BlueprintPath.BP_CardMovementComponent);
         blueprint.load(UE.Game.Blueprint.BPW.Page.BP_CardMovementComponentt.BP_CardMovementComponentt_C);
         this.mCardMovementComponent = UE.GameplayStatics.BeginDeferredActorSpawnFromClass(
@@ -69,6 +71,8 @@ export class DuelPage {
             UE.Transform.Identity
         ) as unknown as BP_CardMovementComponent;
         UE.GameplayStatics.FinishSpawningActor(this.mCardMovementComponent, UE.Transform.Identity);
+        
+        this.mCardMovementComponent?.SetNeedInfo(this.CardUseZone, this);
         console.log("[BPW_DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);     
     }
 
@@ -89,7 +93,19 @@ export class DuelPage {
         card.InitSample();
         this.CardList.push(card);
         this.mCardMovementComponent?.AddCard(card);
+        // this.mCardMovementComponent?.print();
+        // this.mCardMovementComponent?.SetSomeData(this.CardUseZone,this);
         return card;
+    }
+
+    /**
+     * 当卡牌被拖到使用区，调用
+     * @example BP_CardMovementComponent.OnDragReleased
+     */
+    UseCard(idx: number) { 
+        this.CardList[idx].Use();
+        console.log("[BPW_DuelPage].UseCard, idx = ", idx);
+        
     }
 
 }

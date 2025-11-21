@@ -26,6 +26,8 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
     SampleList = [];
     /** 鼠标点击卡牌时的偏移 */
     DragOffset = new ue_1.default.Vector2D(0, 0);
+    UseZone = null;
+    Page = null;
     /**
      * @description 初始化数据
      */
@@ -43,6 +45,17 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
     ReceiveTick(DeltaSeconds) {
         this.ProcessDragCard();
         this.ProcessInterp(DeltaSeconds);
+    }
+    // SetNeedInfo(useZone: UE.Image, page: IPageInterface) { 
+    //     this.UseZone = useZone;
+    //     this.Page = page;
+    // }
+    SetNeedInfo(useZone, page) {
+        this.UseZone = useZone;
+        this.Page = page;
+    }
+    print() {
+        console.log("amzing");
     }
     /**
      * @description 处理鼠标拖拽卡牌, Tick
@@ -125,7 +138,6 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
      * @param card 点击的 CardSample
      */
     OnDragPressed(card) {
-        console.log("[CardMovementComponent].OnDragPressed, incard = ", card);
         this.bDragging = true;
         this.DraggedCard = card;
         let MousePos = ue_1.default.WidgetLayoutLibrary.GetMousePositionOnViewport(this.GetWorld());
@@ -139,10 +151,14 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
      * @param card 点击的 CardSample
      */
     OnDragReleased(card) {
-        console.log("[CardMovementComponent].OnDragReleased, incard = ", card);
         this.bDragging = false;
         if (this.DraggedCard !== card) {
             console.log("[CardMovementComponent][Error].OnDragReleased: Mismatched card");
+        }
+        // 使用卡牌
+        if (this.JudgeUsable()) {
+            const idx = this.SampleList.indexOf(card);
+            this.Page?.UseCard(idx);
         }
         this.DraggedCard = null;
         this.DragOffset = new ue_1.default.Vector2D(0, 0);
@@ -162,14 +178,12 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
             if (idx === HoverIdx) {
                 let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(true));
                 this.TargetPos.Set(idx, pos);
-                console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
                 continue;
             }
             const Direction = idx > HoverIdx ? 1 : -1;
             // -50 是向上的偏移距离
             let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, this.CalculateCardPosY(false));
             this.TargetPos.Set(idx, pos);
-            console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
         }
         if (!this.bDragging) {
             this.StartInterp();
@@ -224,6 +238,7 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
             }
         }
         this.StartInterp();
+        this.print();
     }
     /**
      * @description 计算卡牌的目标位置
@@ -231,7 +246,6 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
      * @returns 返回卡牌的 x 目标位置
      */
     CalculateCardPosByIdx(idx) {
-        console.log("[CardMovementComponent].CalculateCardPosByIdx, idx = ", idx);
         let ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
         let DPIScale = ue_1.default.WidgetLayoutLibrary.GetViewportScale(SystemManager_1.SystemManager.GetWorld());
         let result = ViewPortSize.X / 2 / DPIScale + (idx - (this.SampleList.length - 1) / 2) * this.Interval - 100 * DPIScale;
@@ -242,6 +256,27 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
         const ViewPortSize = ue_1.default.WidgetLayoutLibrary.GetViewportSize(this);
         let res = ViewPortSize.Y / DPIScale - this.High - (IsSelected ? 50 : 0);
         return res;
+    }
+    /**
+     *
+     *  判断拖拽的卡是否在使用区内
+     */
+    JudgeUsable() {
+        if (!this.DraggedCard || !this.UseZone)
+            return false;
+        const cardGeo = this.DraggedCard.GetCachedGeometry();
+        const HandGeo = this.UseZone?.GetCachedGeometry();
+        const cardLocal = ue_1.default.SlateBlueprintLibrary.GetLocalTopLeft(cardGeo);
+        const cardPos = ue_1.default.SlateBlueprintLibrary.LocalToAbsolute(cardGeo, cardLocal);
+        const cardSize = ue_1.default.SlateBlueprintLibrary.GetAbsoluteSize(cardGeo);
+        const UseZoneLocal = ue_1.default.SlateBlueprintLibrary.GetLocalTopLeft(HandGeo);
+        const UseZonePos = ue_1.default.SlateBlueprintLibrary.LocalToAbsolute(HandGeo, UseZoneLocal);
+        const UseZoneSize = ue_1.default.SlateBlueprintLibrary.GetAbsoluteSize(cardGeo);
+        const centerX = cardPos.X + cardSize.X / 2;
+        const centerY = cardPos.Y + cardSize.Y / 2;
+        let IsInside = centerX > UseZonePos.X && centerX < UseZonePos.X + UseZoneSize.X &&
+            centerY > UseZonePos.Y && centerY < UseZonePos.Y + UseZoneSize.Y;
+        return IsInside;
     }
 };
 exports.BP_CardMovementComponent = BP_CardMovementComponent;

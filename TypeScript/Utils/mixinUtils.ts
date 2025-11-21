@@ -2,10 +2,12 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-17 17:50:25
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-17 18:01:45
+ * @LastEditTime: 2025-11-21 17:08:52
  * @FilePath: \CG1111\TypeScript\Utils\mixinUtils.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
+console.log("[mixinUtils].head");
+
 import UE from 'ue';
 import { blueprint } from 'puerts';
 
@@ -46,3 +48,6 @@ export function BlueprintMixin(blueprintPath: string) {
         } as T;
     };
 }
+
+console.log("[mixinUtils].Finish");
+

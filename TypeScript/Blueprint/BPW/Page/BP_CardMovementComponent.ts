@@ -1,13 +1,17 @@
 console.log("[CardMovementComponent].Start")
 import UE from 'ue';
 import { BlueprintPath } from '../../Path';
-import { SampleWidget  } from './BPW_SampleWidget';
-import { CardInstance } from './CardInstance';
+import { SampleWidget  } from '../CardInstance/BPW_SampleWidget'
+import { CardInstance } from '../CardInstance/CardInstance'
 import { SystemManager } from '../../../SubSystem/SystemManager';
 import { BlueprintMixin } from '../../../Utils/mixinUtils';
+import { DuelPage } from './BPW_DuelPage';
+// import { DuelPage } from './BPW_DuelPage';
 
 
-
+// export interface IPageInterface { 
+//     UseCard(idx: number): void; // 避免循环引用
+// }
 
 export interface BP_CardMovementComponent extends UE.Game.Blueprint.BPW.Page.BP_CardMovementComponentt.BP_CardMovementComponentt_C {}
 @BlueprintMixin(BlueprintPath.BP_CardMovementComponent)
@@ -23,7 +27,8 @@ export class BP_CardMovementComponent {
     private SampleList: SampleWidget[] = [];
     /** 鼠标点击卡牌时的偏移 */
     private DragOffset: UE.Vector2D = new UE.Vector2D(0, 0);
-
+    private UseZone: UE.Image | null = null;
+    private Page: DuelPage | null = null;
 
     /**
      * @description 初始化数据
@@ -45,6 +50,21 @@ export class BP_CardMovementComponent {
     ReceiveTick(DeltaSeconds: number) : void {
         this.ProcessDragCard();
         this.ProcessInterp(DeltaSeconds);
+    }
+
+    // SetNeedInfo(useZone: UE.Image, page: IPageInterface) { 
+    //     this.UseZone = useZone;
+    //     this.Page = page;
+    // }
+    SetNeedInfo(useZone: UE.Image, page: DuelPage) { 
+        this.UseZone = useZone;
+        this.Page = page;
+    }
+
+
+    print(){
+        console.log("amzing");
+
     }
 
     
@@ -149,7 +169,6 @@ export class BP_CardMovementComponent {
      * @param card 点击的 CardSample
      */
     private OnDragPressed(card: UE.UserWidget): void {
-        console.log("[CardMovementComponent].OnDragPressed, incard = ", card);
         this.bDragging = true;
         this.DraggedCard = card;
 
@@ -165,11 +184,17 @@ export class BP_CardMovementComponent {
      * @param card 点击的 CardSample
      */
     private OnDragReleased(card: UE.UserWidget): void {
-        console.log("[CardMovementComponent].OnDragReleased, incard = ", card);
         this.bDragging = false;
         if (this.DraggedCard !== card) {
             console.log("[CardMovementComponent][Error].OnDragReleased: Mismatched card");
         }
+
+        // 使用卡牌
+        if (this.JudgeUsable()) {
+            const idx = this.SampleList.indexOf(card as SampleWidget);
+            this.Page?.UseCard(idx);
+        }
+
         this.DraggedCard = null;
         this.DragOffset = new UE.Vector2D(0, 0);
     }
@@ -191,15 +216,12 @@ export class BP_CardMovementComponent {
             if(idx === HoverIdx) {
                 let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(true));
                 this.TargetPos.Set(idx, pos);
-                console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
-                
                 continue;
             }
             const Direction: number = idx > HoverIdx ? 1 : -1;
             // -50 是向上的偏移距离
             let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) + this.HoverOffsetX * Direction, this.CalculateCardPosY(false));
             this.TargetPos.Set(idx, pos);
-                console.log("[CardMovementComponent].OnMouseHover, idx = ", idx);
         }
         if(!this.bDragging){
             this.StartInterp();
@@ -263,6 +285,7 @@ export class BP_CardMovementComponent {
             }
         }
         this.StartInterp();
+        this.print();
     }
     
    
@@ -273,7 +296,6 @@ export class BP_CardMovementComponent {
      * @returns 返回卡牌的 x 目标位置
      */
     private CalculateCardPosByIdx(idx: number): number {
-        console.log("[CardMovementComponent].CalculateCardPosByIdx, idx = ", idx);
         let ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
         let DPIScale = UE.WidgetLayoutLibrary.GetViewportScale(SystemManager.GetWorld());
         let result  = ViewPortSize.X / 2 / DPIScale + (idx - (this.SampleList.length - 1) / 2) * this.Interval - 100 * DPIScale;
@@ -285,6 +307,30 @@ export class BP_CardMovementComponent {
         const ViewPortSize: UE.Vector2D = UE.WidgetLayoutLibrary.GetViewportSize(this);
         let res = ViewPortSize.Y / DPIScale - this.High  - (IsSelected ? 50 : 0);
         return res;
+    }
+
+    /**
+     * 
+     *  判断拖拽的卡是否在使用区内
+     */
+    private JudgeUsable(): boolean {
+        if(!this.DraggedCard || !this.UseZone) return false;
+        const cardGeo = this.DraggedCard.GetCachedGeometry();
+        const HandGeo = this.UseZone?.GetCachedGeometry();
+        const cardLocal = UE.SlateBlueprintLibrary.GetLocalTopLeft(cardGeo);
+        const cardPos = UE.SlateBlueprintLibrary.LocalToAbsolute(cardGeo, cardLocal);
+        const cardSize = UE.SlateBlueprintLibrary.GetAbsoluteSize(cardGeo);
+        const UseZoneLocal = UE.SlateBlueprintLibrary.GetLocalTopLeft(HandGeo);
+        const UseZonePos = UE.SlateBlueprintLibrary.LocalToAbsolute(HandGeo, UseZoneLocal);
+        const UseZoneSize = UE.SlateBlueprintLibrary.GetAbsoluteSize(cardGeo);
+
+        const centerX = cardPos.X + cardSize.X / 2;
+        const centerY = cardPos.Y + cardSize.Y / 2;
+        let IsInside: boolean = 
+            centerX > UseZonePos.X && centerX < UseZonePos.X + UseZoneSize.X &&
+            centerY > UseZonePos.Y && centerY < UseZonePos.Y + UseZoneSize.Y;
+        
+        return IsInside;
     }
 
 

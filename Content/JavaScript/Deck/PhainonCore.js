@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const GameOperationSystem_1 = require("../SubSystem/GameOperationSystem");
+exports.PhainonCore = void 0;
+const SystemManager_1 = require("../SubSystem/SystemManager");
+const SystemName_1 = require("../SubSystem/SystemName");
 class PhainonCore {
     GOS = undefined;
     fstCard = 1;
@@ -11,21 +13,21 @@ class PhainonCore {
     Possibility = 0;
     FireSeedMax = 12;
     Init() {
-        this.GOS = GameOperationSystem_1.GameOperationSystem.instance;
+        this.GOS = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem);
     }
-    StartGame() {
+    /**
+     * Core 启动函数
+     */
+    Start() {
         this.Init();
-        this.GOS?.DrawCardByCid(this.fstCard);
         this.phase = EPhase.StartGame;
-        // this.HandlePhase();
+        this.HandlePhase();
         // updateStateText() 初始化 状态栏显示
     }
     // Action 添加的回调
     HandlePhase() {
         this.phase = this.UpdatePhase();
         this.ExecutePhase();
-    }
-    ExecutePhase() {
     }
     UpdatePhase() {
         let cardsNum = this.GOS?.GetHandCardsNum();
@@ -38,7 +40,40 @@ class PhainonCore {
         else
             return EPhase.Battle;
     }
+    ExecutePhase() {
+        switch (this.phase) {
+            case EPhase.StartGame:
+                this.ProcessStartGame();
+                break;
+            case EPhase.Battle:
+                this.ProcessBattle();
+                break;
+            case EPhase.FireMax:
+                this.ProcessFireMax();
+                break;
+            case EPhase.EndGame:
+                this.ProcessEndGame();
+                break;
+            default:
+                console.log("[CoreCard] Error: phase is not found, phase = ", this.phase);
+                break;
+        }
+    }
+    ProcessStartGame() {
+        this.GOS?.DrawCardByCid(this.fstCard);
+    }
+    ProcessBattle() {
+        console.log("[CoreCard] ProcessBattle");
+    }
+    ProcessFireMax() {
+    }
+    ProcessEndGame() {
+        console.log("[CoreCard] GAME OVER");
+    }
+    AddTagCount(tag, count) {
+    }
 }
+exports.PhainonCore = PhainonCore;
 var EPhase;
 (function (EPhase) {
     EPhase[EPhase["None"] = 0] = "None";

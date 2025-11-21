@@ -17,8 +17,10 @@ exports.BlueprintPath = {
     BP_OnAction: "/Game/Blueprint/CardAction/OnAction/BP_OnAction.BP_OnAction_C",
     BP_OnEnd: "/Game/Blueprint/CardAction/OnEnd/BP_OnEnd.BP_OnEnd_C",
     // ActionExtend
-    print1: '/Game/Blueprint/CardAction/OnAction/print1.print1_C',
-    print2: '/Game/Blueprint/CardAction/OnAction/print2.print2_C',
+    AddTagCount: "/Game/Blueprint/CardAction/OnAction/AddTagCount.AddTagCount_C",
+    CreateCardToHand: '/Game/Blueprint/CardAction/OnAction/CreateCardToHand.CreateCardToHand_C',
+    DealDamage: '/Game/Blueprint/CardAction/OnAction/DealDamage.DealDamage_C',
+    print1: "/Game/Blueprint/CardAction/OnAction/print1.print1_C",
 };
 console.log("[Path].Finish");
 //# sourceMappingURL=Path.js.map

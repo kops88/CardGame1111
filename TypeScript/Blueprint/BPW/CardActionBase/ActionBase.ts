@@ -1,13 +1,18 @@
-console.log("[7758]:  ActionBase.ts start");
-import UE from 'ue';
+console.log("[ActionBase]:  ActionBase.ts start");
+import UE, { Enum } from 'ue';
 import { BlueprintPath } from '../../Path'
 import { BlueprintMixin } from '../../../Utils/mixinUtils';
 import { TsDelegate } from '../../../SubSystem/EventSystem';
+import { GameOperationSystem } from '../../../SubSystem/GameOperationSystem';
+import { SystemManager } from '../../../SubSystem/SystemManager';
+import { SystemEnum } from '../../../SubSystem/SystemName';
 
 export interface OnTrigger extends UE.Game.Blueprint.CardAction.OnTrigger.BP_OnTrigger.BP_OnTrigger_C {}
 export interface OnAction extends UE.Game.Blueprint.CardAction.OnAction.BP_OnAction.BP_OnAction_C {}
 export interface OnEnd extends UE.Game.Blueprint.CardAction.OnEnd.BP_OnEnd.BP_OnEnd_C {}
 
+export const ActionName = UE.Game.Blueprint.CardAction.ActionName.ActionName;
+export type ActionType = UE.Game.Blueprint.CardAction.ActionName.ActionName;
 
 @BlueprintMixin(BlueprintPath.BP_OnTrigger)
 export class OnTrigger { 
@@ -45,11 +50,15 @@ export class OnTrigger {
 export class OnAction { 
 
     private mOnEnd: TsDelegate<() => void> = new TsDelegate<() => void>();
-    private params: Map<string, string> = new Map<string, string>();
+    protected declare params: UE.TMap<ActionType, string>
+    protected declare strParams: UE.TMap<string, string>;
+    protected static OP: GameOperationSystem;
 
     ReceiveBeginPlay() { 
         console.log("[EffectTrigger].ReceiveBeginPlay");
         this.mOnEnd= new TsDelegate<() => void>();
+        let OP1 = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
+        if(OP1) OnAction.OP = OP1;
     }
 
     BindEnd(end: OnEnd) {
@@ -57,13 +66,18 @@ export class OnAction {
         this.mOnEnd.Add(end.executeEnd);        
     } 
     
+    /**
+     * 子类务必 super，用于执行结束回调
+     */
     executeAction() { 
         console.log("[ActionExecute].executeAction");
+        this.mOnEnd.Broadcast();
 
     }
 
-    SetParams(iparams: Map<string, string>) {
+    SetParams(iparams: UE.TMap<ActionType, string>, istrParams?: UE.TMap<string, string>) {
         this.params = iparams;
+        if(istrParams) this.strParams = istrParams;
     }
 }
 
@@ -109,4 +123,4 @@ export class OnEnd {
 
 
 
-console.log("[7758]:  ActionBase.ts finish");
+console.log("[ActionBase]:  ActionBase.ts finish");
