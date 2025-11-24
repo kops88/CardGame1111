@@ -5,7 +5,7 @@ exports.EffectHandler = void 0;
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-18 10:33:39
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-21 16:41:04
+ * @LastEditTime: 2025-11-24 17:57:37
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\CardInstance\EffectHandler.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -40,6 +40,10 @@ class EffectHandler {
             /**
              * 绑定 trigger action end
              */
+            this.OnActions.forEach((action) => {
+                console.log("[EffectHandler].constructor: action.params = ", effect.params.GetKey(0), "and ", effect.params.Get(0));
+                action.SetParams(effect.params, effect.StrParams);
+            });
             this.OnActions.forEach((action, idx) => {
                 this.OnTrigger?.BindAction(action);
                 console.log("[EffectHandler].constructor: BindAction: action = ", action.GetName());
@@ -48,13 +52,10 @@ class EffectHandler {
             /**
              * set Params
              */
-            this.OnActions.forEach((action) => {
-                action.SetParams(effect.params, effect.StrParams);
-            });
         }
     }
     /**
-     * @example GameOperationSystem.UseCard()
+     * @ref CardInstance.Use()
      */
     Use() {
         this.OnTrigger?.executeTrigger();

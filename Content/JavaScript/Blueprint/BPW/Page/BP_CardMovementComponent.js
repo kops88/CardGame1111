@@ -147,7 +147,8 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
         this.DragOffset.Y = DragOffsetY;
     }
     /**
-     * @description 松开后，设置 bDragging 和 DraggedCard，用于 tick 拖拽。
+     * 松开后，设置 bDragging 和 DraggedCard，用于 tick 拖拽。
+     * 如果卡牌可以使用，则使用卡牌。
      * @param card 点击的 CardSample
      */
     OnDragReleased(card) {

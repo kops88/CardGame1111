@@ -2,13 +2,28 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-13 09:48:50
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-21 17:58:01
+ * @LastEditTime: 2025-11-24 18:08:36
  * @FilePath: \CG1111\README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
+
 Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
  
 
+### 11.24 卡牌效果执行链 80%，卡住：OnTrigger广播ExecuteAction时无法传递this
+
+问题
+1. 执行效果 CreateCardToHand 时, 丢失this上下文
+    原因:1）broadcast 时，this 丢失, 使用Bind绑定依然无效。
+        2）broadcast时，使用的是函数调用模式（const func = obj.func(); func(); 丢失this），func 为纯函数，丢失this信息
+    尝试：1）使用bind绑定this，无效
+        2）使用箭头函数，自动绑定this，箭头函数为undefined
+
+
+2. 使用 executeAction = () => {}，调用时executeAction() 为undefined
+
+
+    
 ### 11.21 卡牌效果执行链 80%
 完成：
     1. 卡牌效果执行链 80%
@@ -21,7 +36,7 @@ Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
 2. error: (0x00000BFD810B2AB0) Error: Bad parameters #0, expect a object. (@BlueprintMixin 报错)
     原因未知。
     重启就好了。
-3. 执行效果 CreateCardToHand 时，this 为undefined。
+
 
 ### 11.20 CoreCard进度10%，卡牌拖拽适应窗口
 

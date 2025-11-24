@@ -3,7 +3,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-18 17:29:51
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-21 17:54:17
+ * @LastEditTime: 2025-11-24 17:39:02
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\CardActionBase\ActionExtends.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,15 +24,17 @@ console.log("[ActionExtends].StartMixin");
  * @description Tag_TagName, Count
  */
 let print1 = class print1 extends ActionBase_1.OnAction {
-    executeAction() {
+    executeAction = () => {
         console.log("[ActionExecute].print1");
-    }
+    };
 };
 print1 = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.print1)
 ], print1);
 let AddTagCount = class AddTagCount extends ActionBase_1.OnAction {
-    executeAction() {
+    executeAction = () => {
+        if (!this.strParams)
+            return;
         for (const param of this.strParams) {
             const keyStr = param[0];
             const valueStr = parseInt(param[1]);
@@ -41,8 +43,8 @@ let AddTagCount = class AddTagCount extends ActionBase_1.OnAction {
                 ActionBase_1.OnAction.OP.GetCoreCard().AddTagCount(tag, valueStr);
             }
         }
-        super.executeAction();
-    }
+        this.superExecute();
+    };
 };
 AddTagCount = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.AddTagCount)
@@ -52,15 +54,24 @@ AddTagCount = __decorate([
 //  * @description CreateCard, cid
 //  */
 let CreateCardToHand = class CreateCardToHand extends ActionBase_1.OnAction {
-    executeAction() {
-        console.log("[ActionExecute].CreateCardToHand.params = ", this.params.GetKey(0));
+    SetParams(iparams, istrParams) {
+        super.SetParams(iparams, istrParams);
+        if (!this.params)
+            return;
+        console.log("[OnAction].CreateCardToHand.SetParams.param Num= ", this.params.Num(), "this = ", this.GetName(), "func = ", this.executeAction);
+    }
+    executeAction = () => {
+        if (!this.params)
+            return;
+        console.log("[OnAction].CreateCardToHand.executeAction.param Num= ", this.params.Num(), "this = ", this.GetName(), "func = ", this.executeAction);
         for (const param of this.params) {
+            console.log("[OnAction].CreateCardToHand.executeAction.param = ", param[0]);
             if (param[0] === ActionBase_1.ActionName.CreateCard) {
                 ActionBase_1.OnAction.OP.DrawCardByCid(param[1]);
             }
         }
-        super.executeAction();
-    }
+        this.superExecute();
+    };
 };
 CreateCardToHand = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.CreateCardToHand)
@@ -71,13 +82,16 @@ CreateCardToHand = __decorate([
  * @Notice 需要在OP.DealDamage()中，添加伤害的逻辑
  */
 let DealDamage = class DealDamage extends ActionBase_1.OnAction {
-    executeAction() {
+    executeAction = () => {
+        if (!this.params)
+            return;
         for (const param of this.params) {
             if (param[0] === ActionBase_1.ActionName.DealDamage) {
                 ActionBase_1.OnAction.OP.DealDamage(param[1]);
             }
         }
-    }
+        this.superExecute();
+    };
 };
 DealDamage = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.DealDamage)

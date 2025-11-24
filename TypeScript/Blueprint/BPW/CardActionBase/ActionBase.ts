@@ -25,16 +25,29 @@ export class OnTrigger {
         this.mOnAction= new TsDelegate<() => void>();
     }
 
+    /**
+     * 初始化调用，绑定对应的 action
+     * @rule 一组effect，绑定所有action
+     */
     BindAction(action: OnAction) {
         console.log("[EffectTrigger].BindAction");
+        // this.mOnAction.Add(action.executeAction.bind(action));
         this.mOnAction.Add(action.executeAction);
+        console.log("[OnTrigger][OnAction].BindAction, param Num = ", action.paramsNum(), "this = ", action.GetName(), "func = ", action.executeAction);
+        
     }
 
+    /**
+     * @ref EffectHandler.Use()
+     */
     executeTrigger() {
         console.log("[EffectTrigger].executeTrigger");
         this.mOnAction.Broadcast()
     }
 
+    /**
+     * 暂时不用 
+     */
     SetParams(iparams: Map<string, string>) {
         this.params = iparams;
     }
@@ -50,35 +63,42 @@ export class OnTrigger {
 export class OnAction { 
 
     private mOnEnd: TsDelegate<() => void> = new TsDelegate<() => void>();
-    protected declare params: UE.TMap<ActionType, string>
-    protected declare strParams: UE.TMap<string, string>;
+    protected params: UE.TMap<ActionType, string> | undefined = undefined;
+    protected strParams: UE.TMap<string, string> | undefined = undefined;
     protected static OP: GameOperationSystem;
 
     ReceiveBeginPlay() { 
-        console.log("[EffectTrigger].ReceiveBeginPlay");
+        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params? this.params.Num() : 0 , "this = ", this.GetName(), "func = ", this.executeAction);
         this.mOnEnd= new TsDelegate<() => void>();
         let OP1 = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
         if(OP1) OnAction.OP = OP1;
+        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params? this.params.Num() : 0 , "this = ", this.GetName(), "End func = ", this.executeAction);
     }
 
     BindEnd(end: OnEnd) {
-        console.log("[EffectTrigger].BindEnd");
+        console.log("[OnAction].BindEnd, param Num= ", this.params? this.params.Num() : 0 , "this = ", this.GetName(), "func = ", this.executeAction);
         this.mOnEnd.Add(end.executeEnd);        
     } 
     
     /**
      * 子类务必 super，用于执行结束回调
      */
-    executeAction() { 
-        console.log("[ActionExecute].executeAction");
-        this.mOnEnd.Broadcast();
+    executeAction = () => {
+        console.log("[OnAction].executeAction");
+    }
 
+    superExecute() {
+        console.log("[OnAction].executeAction, param Num= ", this.params? this.params.Num() : 0 , "this = ", this.GetName(), "func = ", this.executeAction);
+        this.mOnEnd.Broadcast();
     }
 
     SetParams(iparams: UE.TMap<ActionType, string>, istrParams?: UE.TMap<string, string>) {
         this.params = iparams;
+        console.log("[OnAction].SetParams: , param Num= ", this.params? this.params.Num() : 0 , "this = ", this.GetName(), "func = ", this.executeAction);
         if(istrParams) this.strParams = istrParams;
     }
+
+    paramsNum() { return this.params? this.params.Num() : 0;}
 }
 
 

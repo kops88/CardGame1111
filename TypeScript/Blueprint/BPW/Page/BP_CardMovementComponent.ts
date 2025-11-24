@@ -67,7 +67,6 @@ export class BP_CardMovementComponent {
 
     }
 
-    
     /**
      * @description 处理鼠标拖拽卡牌, Tick
      */
@@ -180,7 +179,8 @@ export class BP_CardMovementComponent {
     }
 
     /**
-     * @description 松开后，设置 bDragging 和 DraggedCard，用于 tick 拖拽。 
+     * 松开后，设置 bDragging 和 DraggedCard，用于 tick 拖拽。 
+     * 如果卡牌可以使用，则使用卡牌。
      * @param card 点击的 CardSample
      */
     private OnDragReleased(card: UE.UserWidget): void {

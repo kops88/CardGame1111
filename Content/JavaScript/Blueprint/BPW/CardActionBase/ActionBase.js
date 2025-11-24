@@ -26,14 +26,26 @@ let OnTrigger = class OnTrigger {
         console.log("[EffectTrigger].ReceiveBeginPlay");
         this.mOnAction = new EventSystem_1.TsDelegate();
     }
+    /**
+     * 初始化调用，绑定对应的 action
+     * @rule 一组effect，绑定所有action
+     */
     BindAction(action) {
         console.log("[EffectTrigger].BindAction");
+        // this.mOnAction.Add(action.executeAction.bind(action));
         this.mOnAction.Add(action.executeAction);
+        console.log("[OnTrigger][OnAction].BindAction, param Num = ", action.paramsNum(), "this = ", action.GetName(), "func = ", action.executeAction);
     }
+    /**
+     * @ref EffectHandler.Use()
+     */
     executeTrigger() {
         console.log("[EffectTrigger].executeTrigger");
         this.mOnAction.Broadcast();
     }
+    /**
+     * 暂时不用
+     */
     SetParams(iparams) {
         this.params = iparams;
     }
@@ -50,30 +62,38 @@ exports.OnTrigger = OnTrigger = __decorate([
 let OnAction = class OnAction {
     static { OnAction_1 = this; }
     mOnEnd = new EventSystem_1.TsDelegate();
+    params = undefined;
+    strParams = undefined;
     static OP;
     ReceiveBeginPlay() {
-        console.log("[EffectTrigger].ReceiveBeginPlay");
+        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
         this.mOnEnd = new EventSystem_1.TsDelegate();
         let OP1 = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem);
         if (OP1)
             OnAction_1.OP = OP1;
+        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "End func = ", this.executeAction);
     }
     BindEnd(end) {
-        console.log("[EffectTrigger].BindEnd");
+        console.log("[OnAction].BindEnd, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
         this.mOnEnd.Add(end.executeEnd);
     }
     /**
      * 子类务必 super，用于执行结束回调
      */
-    executeAction() {
-        console.log("[ActionExecute].executeAction");
+    executeAction = () => {
+        console.log("[OnAction].executeAction");
+    };
+    superExecute() {
+        console.log("[OnAction].executeAction, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
         this.mOnEnd.Broadcast();
     }
     SetParams(iparams, istrParams) {
         this.params = iparams;
+        console.log("[OnAction].SetParams: , param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
         if (istrParams)
             this.strParams = istrParams;
     }
+    paramsNum() { return this.params ? this.params.Num() : 0; }
 };
 exports.OnAction = OnAction;
 exports.OnAction = OnAction = OnAction_1 = __decorate([
