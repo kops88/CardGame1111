@@ -27,7 +27,7 @@ class CardInstance {
     EffectHandler = undefined;
     constructor(def) {
         this.Def = def;
-        this.EffectHandler = new EffectHandler_1.EffectHandler(this.Def);
+        this.EffectHandler = new EffectHandler_1.EffectHandler(this.Def, this);
     }
     /**
      * @description 创建 SampleWidget，并给 SampleWidget 做初始化。
@@ -59,6 +59,9 @@ class CardInstance {
     Use() {
         console.log("[CardInstance].Use , cid = ", this.Def.cid);
         this.EffectHandler?.Use();
+    }
+    GetParamsNum() {
+        return this.EffectHandler?.GetParamsNum();
     }
 }
 exports.CardInstance = CardInstance;

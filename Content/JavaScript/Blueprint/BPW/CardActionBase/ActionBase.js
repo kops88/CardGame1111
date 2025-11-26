@@ -21,7 +21,6 @@ const SystemName_1 = require("../../../SubSystem/SystemName");
 exports.ActionName = ue_1.default.Game.Blueprint.CardAction.ActionName.ActionName;
 let OnTrigger = class OnTrigger {
     mOnAction = new EventSystem_1.TsDelegate();
-    params = new Map();
     ReceiveBeginPlay() {
         console.log("[EffectTrigger].ReceiveBeginPlay");
         this.mOnAction = new EventSystem_1.TsDelegate();
@@ -32,22 +31,15 @@ let OnTrigger = class OnTrigger {
      */
     BindAction(action) {
         console.log("[EffectTrigger].BindAction");
-        // this.mOnAction.Add(action.executeAction.bind(action));
-        this.mOnAction.Add(action.executeAction);
-        console.log("[OnTrigger][OnAction].BindAction, param Num = ", action.paramsNum(), "this = ", action.GetName(), "func = ", action.executeAction);
+        this.mOnAction.Add(action.executeAction.bind(action));
+        console.log("[OnTrigger][OnAction].BindAction, param Num = ", action.paramsNum(), "this = ", action.GetName());
     }
     /**
-     * @ref EffectHandler.Use()
+     * @Link EffectHandler.Use()
      */
     executeTrigger() {
         console.log("[EffectTrigger].executeTrigger");
-        this.mOnAction.Broadcast();
-    }
-    /**
-     * 暂时不用
-     */
-    SetParams(iparams) {
-        this.params = iparams;
+        this.mOnAction.Broadcast(this);
     }
 };
 exports.OnTrigger = OnTrigger;
@@ -62,34 +54,29 @@ exports.OnTrigger = OnTrigger = __decorate([
 let OnAction = class OnAction {
     static { OnAction_1 = this; }
     mOnEnd = new EventSystem_1.TsDelegate();
-    params = undefined;
-    strParams = undefined;
     static OP;
     ReceiveBeginPlay() {
-        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
+        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params ? this.params.Num() : "undefined", "this = ", this.GetName());
         this.mOnEnd = new EventSystem_1.TsDelegate();
         let OP1 = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem);
         if (OP1)
             OnAction_1.OP = OP1;
-        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "End func = ", this.executeAction);
+        console.log("[OnAction].ReceiveBeginPlay, param Num= ", this.params ? this.params.Num() : "undefined", "this = ", this.GetName());
     }
     BindEnd(end) {
-        console.log("[OnAction].BindEnd, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
-        this.mOnEnd.Add(end.executeEnd);
+        console.log("[OnAction].BindEnd, param Num= ", this.params ? this.params.Num() : "undefined", "this = ", this.GetName());
+        this.mOnEnd.Add(end.executeEnd.bind(end));
     }
     /**
      * 子类务必 super，用于执行结束回调
      */
-    executeAction = () => {
-        console.log("[OnAction].executeAction");
-    };
-    superExecute() {
-        console.log("[OnAction].executeAction, param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
-        this.mOnEnd.Broadcast();
+    executeAction() {
+        console.log("[OnAction].executeAction, param Num= ", this.params ? this.params.Num() : "undefined", "this = ", this.GetName());
+        this.mOnEnd.Broadcast(this);
     }
     SetParams(iparams, istrParams) {
         this.params = iparams;
-        console.log("[OnAction].SetParams: , param Num= ", this.params ? this.params.Num() : 0, "this = ", this.GetName(), "func = ", this.executeAction);
+        console.log("[OnAction].SetParams: , param Num= ", this.params ? this.params.Num() : "undefined", "this = ", this.GetName());
         if (istrParams)
             this.strParams = istrParams;
     }
@@ -100,17 +87,36 @@ exports.OnAction = OnAction = OnAction_1 = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BP_OnAction)
 ], OnAction);
 let OnEnd = class OnEnd {
-    params = new Map();
     executeEnd() {
-        console.log("[EffectTrigger].executeEnd");
-    }
-    SetParams(iparams) {
-        this.params = iparams;
+        console.log("[OnEnd].executeEnd");
     }
 };
 exports.OnEnd = OnEnd;
 exports.OnEnd = OnEnd = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BP_OnEnd)
 ], OnEnd);
+// @BlueprintMixin(BlueprintPath.BP_OnEnd)
+// export class OnEnd { 
+//    protected mInstance: CardInstance | undefined = undefined;
+//    protected static OP: GameOperationSystem;
+//     ReceiveBeginPlay() { 
+//         console.log("[OnEnd].ReceiveBeginPlay, name = ", this.GetName());
+//     }
+//     /**
+//      * 重写 executeEnd 方法
+//      */
+//     executeEnd() {
+//         console.log("[EffectTrigger].executeEnd");
+//     }
+//     /**
+//      * @Link EffectHandler.Constructor
+//      */
+//     SetInstance(instance: CardInstance) { 
+//         if(!OnEnd.OP && SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem)) {
+//             OnEnd.OP = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
+//         }
+//         this.mInstance = instance;
+//     }
+// }
 console.log("[ActionBase]:  ActionBase.ts finish");
 //# sourceMappingURL=ActionBase.js.map

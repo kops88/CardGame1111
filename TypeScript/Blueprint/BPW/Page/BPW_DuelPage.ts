@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-24 18:04:25
+ * @LastEditTime: 2025-11-26 15:00:38
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,7 +24,6 @@ export interface DuelPage extends UE.Game.Blueprint.BPW.Page.BPW_DuelPage.BPW_Du
 export class DuelPage {
 
     private mCardMovementComponent: BP_CardMovementComponent | null = null;
-
     private CardList: CardInstance[] = [];
 
     Construct() {
@@ -33,6 +32,15 @@ export class DuelPage {
         this.CreateMovementComponent();
         this.CardList = [];
         this.RegisterEvents();
+    }
+
+    GetParamsNume() { 
+        if(this.CardList[0]) {
+            return this.CardList[0].GetParamsNum();
+        }
+        else { 
+            return "unknown";
+        }
     }
 
 

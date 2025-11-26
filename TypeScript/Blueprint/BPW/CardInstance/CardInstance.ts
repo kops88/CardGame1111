@@ -28,7 +28,7 @@ export class CardInstance {
 
     constructor(def: CardDef) {
         this.Def = def;
-        this.EffectHandler = new EffectHandler(this.Def);
+        this.EffectHandler = new EffectHandler(this.Def, this);
     }
 
     /**
@@ -68,6 +68,10 @@ export class CardInstance {
     Use() { 
         console.log("[CardInstance].Use , cid = ", this.Def.cid);
         this.EffectHandler?.Use();
+    }
+
+    GetParamsNum() { 
+        return this.EffectHandler?.GetParamsNum();
     }
 }
 

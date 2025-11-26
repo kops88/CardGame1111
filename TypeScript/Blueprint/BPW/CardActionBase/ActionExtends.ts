@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-18 17:29:51
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-24 17:39:02
+ * @LastEditTime: 2025-11-26 15:53:30
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\CardActionBase\ActionExtends.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,11 +19,10 @@ console.log("[ActionExtends].StartMixin");
  * 添加标签计数，全局机制
  * @description Tag_TagName, Count 
  */
-
 @BlueprintMixin(BlueprintPath.print1)
 class print1 extends OnAction {
 
-    executeAction = () => {
+    executeAction() {
         console.log("[ActionExecute].print1");
     }
 
@@ -33,7 +32,7 @@ class print1 extends OnAction {
 @BlueprintMixin(BlueprintPath.AddTagCount)
 class AddTagCount extends OnAction { 
 
-    executeAction = () => {
+    executeAction() {
         if(!this.strParams) return;
         for( const param of this.strParams) {
             
@@ -44,7 +43,7 @@ class AddTagCount extends OnAction {
                 OnAction.OP.GetCoreCard().AddTagCount(tag, valueStr);
             }
         }
-        this.superExecute();
+        super.executeAction();
     }
 }
 
@@ -59,13 +58,13 @@ class CreateCardToHand extends OnAction {
     SetParams(iparams: UE.TMap<ActionType, string>, istrParams?: UE.TMap<string, string>): void {
         super.SetParams(iparams, istrParams);
         if(!this.params) return;
-        console.log("[OnAction].CreateCardToHand.SetParams.param Num= ", this.params.Num(), "this = ", this.GetName(), "func = ", this.executeAction);
+        console.log("[OnAction].CreateCardToHand.SetParams.param Num= ", this.params.Num(), "this = ", this.GetName());
         
     }
 
-    executeAction = () => {
+    executeAction() {
         if(!this.params) return;
-        console.log("[OnAction].CreateCardToHand.executeAction.param Num= ", this.params.Num(), "this = ", this.GetName(), "func = ", this.executeAction);
+        console.log("[OnAction].CreateCardToHand.executeAction.param Num= ", this.params.Num(), "this = ", this.GetName());
         for(const param of this.params)
         {
             console.log("[OnAction].CreateCardToHand.executeAction.param = ", param[0]);
@@ -74,7 +73,7 @@ class CreateCardToHand extends OnAction {
                 OnAction.OP.DrawCardByCid(param[1]);
             }
         }
-        this.superExecute();
+        super.executeAction();
     }
 }
 
@@ -86,21 +85,16 @@ class CreateCardToHand extends OnAction {
 @BlueprintMixin(BlueprintPath.DealDamage)
 class DealDamage extends OnAction {
 
-    executeAction = () => {
+    executeAction() {
         if(!this.params) return;
         for(const param of this.params) {
             if(param[0] === ActionName.DealDamage) {
             OnAction.OP.DealDamage(param[1]);
             }
         }
-        this.superExecute();
+        super.executeAction();
     }
 
 }
-
-
-
-
-
 
 console.log("[ActionExtends].End");

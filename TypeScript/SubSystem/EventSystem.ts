@@ -74,3 +74,35 @@ export class TsDelegate<T extends Function> {
         this.callbacks = [];
     }
 }
+
+export class TsDelegate_new {
+
+    private entries: Array<{target: any, callback: Function}> = [];
+
+    /**
+     * @param cb 委托的回调函数
+     */
+    Add(target: any, cb: Function): void {
+        this.entries.push({target, callback: cb});
+    }
+
+    Remove(target: any, cb: Function): void {
+        const index = this.entries.findIndex(
+            entry => entry.target === target && entry.callback === cb
+        );
+        if (index !== -1) {
+            this.entries.splice(index, 1);
+        }
+    }
+
+    Broadcast(...args: any[]): void {
+        for (const entry of this.entries) {
+            entry.callback.call(entry.target, ...args);
+        }
+    }
+
+    Clear(): void {
+        this.entries = [];
+    }
+}
+

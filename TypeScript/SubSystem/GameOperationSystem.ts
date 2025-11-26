@@ -68,6 +68,10 @@ export class GameOperationSystem {
         console.log("[GameOperationSystem].DealDamage: damage = ", damage);
     }
 
+    DestroyCard(card: CardInstance) { 
+        this.CardList.splice(this.CardList.indexOf(card), 1);
+    }
+
     /**
      * 统一的获取手卡数量函数
      */

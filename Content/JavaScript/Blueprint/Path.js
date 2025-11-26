@@ -21,6 +21,9 @@ exports.BlueprintPath = {
     CreateCardToHand: '/Game/Blueprint/CardAction/OnAction/CreateCardToHand.CreateCardToHand_C',
     DealDamage: '/Game/Blueprint/CardAction/OnAction/DealDamage.DealDamage_C',
     print1: "/Game/Blueprint/CardAction/OnAction/print1.print1_C",
+    // EndExtend
+    CommonDestroy: "/Game/Blueprint/CardAction/OnEnd/CommonDestroy.CommonDestroy_C",
+    endprint: "/Game/Blueprint/CardAction/OnEnd/endprint.endprint_C",
 };
 console.log("[Path].Finish");
 //# sourceMappingURL=Path.js.map
