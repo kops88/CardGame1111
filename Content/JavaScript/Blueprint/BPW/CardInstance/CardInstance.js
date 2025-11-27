@@ -60,6 +60,9 @@ class CardInstance {
         console.log("[CardInstance].Use , cid = ", this.Def.cid);
         this.EffectHandler?.Use();
     }
+    Destroy() {
+        this.SampleWidget?.RemoveFromParent();
+    }
     GetParamsNum() {
         return this.EffectHandler?.GetParamsNum();
     }

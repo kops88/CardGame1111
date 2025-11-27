@@ -1,6 +1,7 @@
 console.log('[SystemName] head');
 import { AssetSystem } from "./AssetSystem";
 import { GameOperationSystem } from "./GameOperationSystem"
+import { PanelSystem } from "./PanelSystem";
 console.log('[SystemName] start');
 
 /**
@@ -9,6 +10,7 @@ console.log('[SystemName] start');
 export const SystemNameEnum = {
     AssetSystem: "AssetSystem" as unknown as AssetSystem,
     GameOperationSystem: "GameOperationSystem" as unknown as GameOperationSystem,
+    PanelSystem: "PanelSystem" as unknown as PanelSystem,
 
 };
 

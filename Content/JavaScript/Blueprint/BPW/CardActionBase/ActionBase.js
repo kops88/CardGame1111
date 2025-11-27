@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var OnAction_1;
+var OnAction_1, OnEnd_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OnEnd = exports.OnAction = exports.OnTrigger = exports.ActionName = void 0;
 console.log("[ActionBase]:  ActionBase.ts start");
@@ -87,12 +87,25 @@ exports.OnAction = OnAction = OnAction_1 = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BP_OnAction)
 ], OnAction);
 let OnEnd = class OnEnd {
+    static { OnEnd_1 = this; }
+    myInstance = undefined;
+    static OP;
     executeEnd() {
         console.log("[OnEnd].executeEnd");
     }
+    /**
+     * @Link EffectHandler.Constructor
+     */
+    SetInstance(instance) {
+        if (!OnEnd_1.OP && SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem)) {
+            OnEnd_1.OP = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.GameOperationSystem);
+        }
+        console.log("[OnEnd].SetInstance, instance = ", instance, "this = ", this.GetName());
+        this.myInstance = instance;
+    }
 };
 exports.OnEnd = OnEnd;
-exports.OnEnd = OnEnd = __decorate([
+exports.OnEnd = OnEnd = OnEnd_1 = __decorate([
     (0, mixinUtils_1.BlueprintMixin)(Path_1.BlueprintPath.BP_OnEnd)
 ], OnEnd);
 // @BlueprintMixin(BlueprintPath.BP_OnEnd)

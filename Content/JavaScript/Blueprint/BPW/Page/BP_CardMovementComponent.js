@@ -205,6 +205,17 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
         }
     }
     /**
+     * @description 重新计算TargetPos，并startinterp
+     */
+    StartCardInterp() {
+        this.TargetPos.Empty();
+        for (let idx = 0; idx < this.SampleList.length; idx++) {
+            let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(false));
+            this.TargetPos.Add(pos);
+        }
+        this.StartInterp();
+    }
+    /**
      * @description 开始插值
      */
     StartInterp() {
@@ -231,14 +242,8 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
             transform.Translation.Y = this.CalculateCardPosY(false);
             mSampleWidget.SetRenderTransform(transform);
             console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
-            // 计算目标位置
-            this.TargetPos.Empty();
-            for (let idx = 0; idx < this.SampleList.length; idx++) {
-                let pos = new ue_1.default.Vector2D(this.CalculateCardPosByIdx(idx), this.CalculateCardPosY(false));
-                this.TargetPos.Add(pos);
-            }
         }
-        this.StartInterp();
+        this.StartCardInterp();
         this.print();
     }
     /**
@@ -278,6 +283,14 @@ let BP_CardMovementComponent = class BP_CardMovementComponent {
         let IsInside = centerX > UseZonePos.X && centerX < UseZonePos.X + UseZoneSize.X &&
             centerY > UseZonePos.Y && centerY < UseZonePos.Y + UseZoneSize.Y;
         return IsInside;
+    }
+    /**
+     * @description 移除SampleList，并StartCardInterp
+     * @Link DuelPage.RemoveCard Only
+     */
+    RemoveSample(sample) {
+        this.SampleList.splice(this.SampleList.indexOf(sample), 1);
+        this.StartCardInterp();
     }
 };
 exports.BP_CardMovementComponent = BP_CardMovementComponent;

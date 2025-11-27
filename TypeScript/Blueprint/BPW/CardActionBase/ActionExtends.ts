@@ -59,7 +59,6 @@ class CreateCardToHand extends OnAction {
         super.SetParams(iparams, istrParams);
         if(!this.params) return;
         console.log("[OnAction].CreateCardToHand.SetParams.param Num= ", this.params.Num(), "this = ", this.GetName());
-        
     }
 
     executeAction() {

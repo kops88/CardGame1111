@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "esnext",
-    "types": [],
+    "types": ["node"],
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -34,7 +34,9 @@
 
     // Recommended Options
     "strict": true,
+    "strictNullChecks": false,
     "skipLibCheck": true,
+    "noImplicitAny": false,
     // Add local declaration folders so the compiler picks up UE / puerts typings
     "typeRoots": [
       "./Typing",

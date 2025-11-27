@@ -3,6 +3,14 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 14:50:00
  * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-27 11:21:57
+ * @FilePath: \CG1111\TypeScript\SubSystem\AssetSystem.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
+ * @Author: kops88_cmp 3036435162@qq.com
+ * @Date: 2025-11-12 14:50:00
+ * @LastEditors: kops88_cmp 3036435162@qq.com
  * @LastEditTime: 2025-11-17 11:51:18
  * @FilePath: \CG1111\TypeScript\SubSystem\AssetSystem.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -18,14 +26,6 @@ const puerts_1 = require("puerts");
 const SystemName_1 = require("./SystemName");
 const puerts_2 = require("puerts");
 console.log('[AssetSystem] start');
-// class TsCardDef {
-//     cid: number;
-//     img: UE.TSoftObjectPtr<UE.Texture2D> | undefined = undefined;
-//     constructor() {
-//         this.cid = 0;
-//         this.img = undefined;
-//     }
-// }
 class AssetSystem extends SystemName_1.SystemBase {
     static _instance;
     CardTable = undefined;

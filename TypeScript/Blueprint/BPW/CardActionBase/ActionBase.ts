@@ -92,9 +92,24 @@ export class OnAction {
 
 @BlueprintMixin(BlueprintPath.BP_OnEnd)
 export class OnEnd {
+    protected myInstance: CardInstance | undefined = undefined;
+    protected static OP: GameOperationSystem;
 
     executeEnd() { 
         console.log("[OnEnd].executeEnd");
+    }
+
+    /**
+     * @Link EffectHandler.Constructor
+     */
+    SetInstance(instance: CardInstance) { 
+
+        if(!OnEnd.OP && SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem)) {
+            OnEnd.OP = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
+        }
+        console.log("[OnEnd].SetInstance, instance = ", instance, "this = ", this.GetName());
+        
+        this.myInstance = instance;
     }
     
 }

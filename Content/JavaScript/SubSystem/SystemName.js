@@ -9,6 +9,7 @@ console.log('[SystemName] start');
 exports.SystemNameEnum = {
     AssetSystem: "AssetSystem",
     GameOperationSystem: "GameOperationSystem",
+    PanelSystem: "PanelSystem",
 };
 exports.SystemEnum = exports.SystemNameEnum;
 class SystemBase {

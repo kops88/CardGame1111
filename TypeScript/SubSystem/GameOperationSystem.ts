@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 15:40:45
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-21 14:51:14
+ * @LastEditTime: 2025-11-27 10:34:27
  * @FilePath: \CG1111\TypeScript\SubSystem\GameOperationSystem.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,7 +10,7 @@
 import { AssetSystem } from './AssetSystem';
 import { SystemManager,  } from './SystemManager';
 import { SystemEnum, SystemType } from './SystemName';
-import { DuelPage } from '../Blueprint/BPW/Page/BPW_DuelPage';
+import { DuelPage } from '../Blueprint/BPW/Panel/DuelPage';
 import { CardInstance } from '../Blueprint/BPW/CardInstance/CardInstance';
 import { PhainonCore, CoreCard } from '../Deck/PhainonCore'
 
@@ -53,11 +53,11 @@ export class GameOperationSystem {
         const def = this.AS?.GetCardDefByCid(cid);
         if(def) {
             let card = this.HandZone?.AddCardToHand(def);
-            if(card) {
+            // if(card) {
 
-                this.CardList.push(card);
+            //     this.CardList.push(card);
 
-            }
+            // }
         }
     }
 
@@ -68,8 +68,11 @@ export class GameOperationSystem {
         console.log("[GameOperationSystem].DealDamage: damage = ", damage);
     }
 
-    DestroyCard(card: CardInstance) { 
-        this.CardList.splice(this.CardList.indexOf(card), 1);
+    /**
+     * 统一删除手卡的函数 
+     */
+    DestroyHandCard(card: CardInstance) { 
+        this.HandZone?.RemoveCard(card);
     }
 
     /**
@@ -78,10 +81,6 @@ export class GameOperationSystem {
     GetHandCardsNum(): number { 
         if(!this.HandZone) return 0;
         return this.HandZone?.GetHandCardsNum();
-    }
-
-    UseCard() {
-        this.CardList[0].Use();
     }
 
     GetCoreCard(): CoreCard{ 

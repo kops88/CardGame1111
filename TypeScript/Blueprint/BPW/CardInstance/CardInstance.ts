@@ -70,6 +70,10 @@ export class CardInstance {
         this.EffectHandler?.Use();
     }
 
+    Destroy() { 
+        this.SampleWidget?.RemoveFromParent();
+    }
+
     GetParamsNum() { 
         return this.EffectHandler?.GetParamsNum();
     }

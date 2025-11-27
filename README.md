@@ -2,25 +2,51 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-13 09:48:50
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-24 18:08:36
+ * @LastEditTime: 2025-11-27 18:25:49
  * @FilePath: \CG1111\README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 
 Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
- 
+
+未解决：
+1. class 内的常用实例对象，需要通过"this"访问，有点麻烦？
+2. CommonDestroy（OnEnd子类）调用时，GetName为CommonDestroy，execute调用的是OnEnd的方法。
+
+
+### 11.27  PanelSystem 进度10%，卡牌效果执行链 95%
+添加了 PanelSystem，重新整理了 Duelpage。
+tsconfig 加入 node 模块
+
+解决：
+1. 卡牌效果执行 OnEnd 无法调用子类 executeEnd，修复。
+
+### 11.26 
+解决：
+1. 卡牌效果执行 OnAction 修复。
+2. 卡牌效果执行 OnTrigger 修复。
+问题
+ 1. 执行效果CreateCardToHand时，this指针相同，但是params.Num为0，导致无法执行效果。（未知，已解决）
+    OnAction 构造时，num 为1；
+    tick中正常调用，偶尔为0，偶尔为-1321432342（随机乱码）
+    tick调试断点时，num为1，正常。
+
+    解决：将params字段放在蓝图。
+
+2. OnEnd子类效果执行，无法执行对应子类executeEnd，只执行了OnEnd的executeEnd（已解决）
+    mixin错误，原因未知。
+    将修饰器更改为手动mixin，工作正常
+
 
 ### 11.24 卡牌效果执行链 80%，卡住：OnTrigger广播ExecuteAction时无法传递this
 
 问题
-1. 执行效果 CreateCardToHand 时, 丢失this上下文
+1. 执行效果 CreateCardToHand 时, 丢失this上下文（已解决）
     原因:1）broadcast 时，this 丢失, 使用Bind绑定依然无效。
         2）broadcast时，使用的是函数调用模式（const func = obj.func(); func(); 丢失this），func 为纯函数，丢失this信息
     尝试：1）使用bind绑定this，无效
         2）使用箭头函数，自动绑定this，箭头函数为undefined
 
-
-2. 使用 executeAction = () => {}，调用时executeAction() 为undefined
 
 
     
@@ -47,8 +73,8 @@ Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
     3）GetViewportSize 缩放后的物理尺寸。（窗口实际的），配合setRenderTransform需要 ViewportSize/DPI
     4）slot 内的信息，为蓝图编辑器内定义的信息，非绘制信息
     5）通过 GetCachedGeometry 获取的为绘制信息。配合UE.SlateBlueprintLibrary使用。
-2.class 内的常用实例对象，需要通过"this"访问，有点麻烦？
-3.多出通过访问获取的局部变量，应该使用一个成员存储起来，避免每次都访问。
+
+2.多出通过访问获取的局部变量，应该使用一个成员存储起来，避免每次都访问。
 
 ### 11.19 CardEffect框架完成 3 
 完成：

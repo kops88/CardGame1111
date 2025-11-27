@@ -7,8 +7,16 @@ exports.FunctionLibrary = exports.SystemManager = void 0;
 /*
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 14:50:41
- * @LastEditors: v_lyyulliu
- * @LastEditTime: 2025-11-15 16:43:50
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-27 17:45:33
+ * @FilePath: \CG1111\TypeScript\SubSystem\SystemManager.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
+ * @Author: kops88_cmp 3036435162@qq.com
+ * @Date: 2025-11-12 14:50:41
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-27 17:36:33
  * @FilePath: \CG1111\TypeScript\SubSystem\SystemName.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,7 +25,14 @@ const ue_1 = __importDefault(require("ue"));
 const SystemName_1 = require("./SystemName");
 const AssetSystem_1 = require("./AssetSystem");
 const GameOperationSystem_1 = require("./GameOperationSystem");
+const PanelSystem_1 = require("./PanelSystem");
 console.log('[SystemManager] start');
+/**
+ * 添加新系统步骤：
+ * 1. SystemNameEnum 添加新枚举
+ * 2. 创建新系统，无需继承SystemBase
+ * 3. AddSystem 中添加 set
+ */
 class SystemManager {
     static _instance;
     static WorldContext = null;
@@ -48,6 +63,10 @@ class SystemManager {
             case SystemName_1.SystemNameEnum.GameOperationSystem:
                 this.AllSystems.set(systemName, GameOperationSystem_1.GameOperationSystem.instance);
                 console.log("[SystemManager].AddSystem:GameOperationSystem");
+                break;
+            case SystemName_1.SystemNameEnum.PanelSystem:
+                this.AllSystems.set(systemName, PanelSystem_1.PanelSystem.GetInstance());
+                console.log("[SystemManager].AddSystem:PanelSystem");
                 break;
             default:
                 console.log("[SystemManager].AddSystem:Error: systemName is not found, systemName:", systemName);

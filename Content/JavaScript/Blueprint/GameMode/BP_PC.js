@@ -9,6 +9,8 @@ const ue_1 = __importDefault(require("ue"));
 const puerts_1 = require("puerts");
 const Path_1 = require("../Path");
 const SystemManager_1 = require("../../SubSystem/SystemManager");
+const SystemName_1 = require("../../SubSystem/SystemName");
+const PanelPath_1 = require("../../path/PanelPath");
 /**
  * ts mixin 到蓝图类
  * 1. 加载蓝图类的uclass
@@ -23,7 +25,10 @@ class PlayerController {
     testactor = null;
     ReceiveBeginPlay() {
         console.log("BP_PC ReceiveBeginPlay");
-        ue_1.default.WidgetBlueprintLibrary.Create(this, ue_1.default.Class.Load(Path_1.BlueprintPath.BPW_DuelPage), this).AddToViewport();
+        const panelManager = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.PanelSystem);
+        const DuelPage = panelManager.AddPanelByName(PanelPath_1.PaneNameEnum.DuelPage);
+        DuelPage.Show();
+        // UE.WidgetBlueprintLibrary.Create(this, UE.Class.Load(BlueprintPath.BPW_DuelPage), this).AddToViewport();
         this.bShowMouseCursor = true;
         SystemManager_1.SystemManager.SetWorld(this.GetWorld());
     }

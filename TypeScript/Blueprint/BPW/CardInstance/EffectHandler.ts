@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-18 10:33:39
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-26 17:58:59
+ * @LastEditTime: 2025-11-27 10:04:31
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\CardInstance\EffectHandler.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,23 +31,16 @@ export class EffectHandler {
              * 分别加载 trigger action end
              */
             this.OnTrigger = FunctionLibrary.CreateAction(effect.OnTrigger) as OnTrigger;
-            let i = 0;
+
+            let i = 0; 
             for(let action of effect.OnActions) {
                 let actionIns = FunctionLibrary.CreateAction(action);
                 this.OnActions.push(actionIns as OnAction);
                 console.log("[EffectHandler].constructor: OnEnd = ", this.OnActions[i++].GetName());
             }
-
-            const uclass = UE.Class.Load(BlueprintPath.endprint);
-            let endprint =  FunctionLibrary.CreateAction(uclass) as OnEnd;
-            endprint.executeEnd();
-            let ab = endprint.GetName();
-            console.log(ab);
             
             this.OnEnd = FunctionLibrary.CreateAction(effect.OnEnd)  as OnEnd;
-            const a = this.OnEnd.executeEnd();
-            console.log("[EffectHandler].constructor: OnEnd = ", this.OnEnd.GetName());
-            
+
             if(!this.OnTrigger || !this.OnActions || !this.OnEnd) {
                 // 打印不代表错误。
                 console.log("[EffectHandler].constructor: Error: OnTrigger or OnAction or OnEnd is null");
@@ -60,18 +53,17 @@ export class EffectHandler {
             this.OnActions.forEach((action) => {  
                 console.log("[EffectHandler].constructor: action.params = ", effect.params.GetKey(0), "and ", effect.params.Get(0));
                 console.log("[OnAction].EffectHandler.constructor: params Num = ", effect.params.Num());
-                
-                action.SetParams(effect.params, effect.StrParams)
-
-                
+                action.SetParams(effect.params, effect.StrParams)           
             });
+
             this.OnActions.forEach((action, idx) => {
                 this.OnTrigger?.BindAction(action);
                 this.OnActionTest = action;
                 console.log("[EffectHandler].constructor: BindAction: action = ", action.GetName());
             });
+            
             this.OnActions[0].BindEnd(this.OnEnd);
-            // this.OnEnd.SetInstance(cardInstance)
+            this.OnEnd.SetInstance(cardInstance)
             
             /**
              * set Params

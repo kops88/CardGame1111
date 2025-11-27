@@ -3,7 +3,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-12 11:25:07
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-26 15:00:38
+ * @LastEditTime: 2025-11-27 10:58:43
  * @FilePath: \CG1111\TypeScript\Blueprint\BPW\Page\BPW_DuelPage.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,19 +31,11 @@ let DuelPage = class DuelPage {
     mCardMovementComponent = null;
     CardList = [];
     Construct() {
-        SystemManager_1.SystemManager.instance?.SetHandZone(this);
+        // SystemManager.instance?.SetHandZone(this);
         console.log("[BPW_DuelPage].Construct, instance = ", SystemManager_1.SystemManager.instance);
         this.CreateMovementComponent();
         this.CardList = [];
         this.RegisterEvents();
-    }
-    GetParamsNume() {
-        if (this.CardList[0]) {
-            return this.CardList[0].GetParamsNum();
-        }
-        else {
-            return "unknown";
-        }
     }
     RegisterEvents() {
         console.log("[BPW_DuelPage].RegisterEvents");
@@ -84,8 +76,7 @@ let DuelPage = class DuelPage {
     }
     /**
      * @description 创建卡牌、初始化、添加到手牌区
-     * @example GameOperationSystem.DrawCardByCid
-     *
+     * @Link GameOperationSystem.DrawCardByCid
      */
     AddCardToHand(def) {
         const card = new CardInstance_1.CardInstance(def);
@@ -98,11 +89,24 @@ let DuelPage = class DuelPage {
     }
     /**
      * 当卡牌被拖到使用区，调用
-     * @example BP_CardMovementComponent.OnDragReleased
+     * @Link BP_CardMovementComponent.OnDragReleased
      */
     UseCard(idx) {
-        this.CardList[idx].Use();
         console.log("[BPW_DuelPage].UseCard, idx = ", idx);
+        this.CardList[idx].Use();
+    }
+    /**
+     * 移除手卡
+     * @description 移除card对应的CardList、SampleWidget中的元素，StartCardInterp，removefromparent
+     * @Link GameOperationSystem.DestroyHandCard, Only
+     */
+    RemoveCard(card) {
+        const sample = card.GetSample();
+        if (sample) {
+            this.mCardMovementComponent?.RemoveSample(sample);
+        }
+        this.CardList.splice(this.CardList.indexOf(card), 1);
+        card.Destroy();
     }
 };
 exports.DuelPage = DuelPage;

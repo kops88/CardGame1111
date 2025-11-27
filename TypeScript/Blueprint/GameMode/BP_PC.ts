@@ -3,6 +3,9 @@ import UE from 'ue';
 import { blueprint } from 'puerts';
 import { BlueprintPath } from '../Path';
 import { SystemManager } from '../../SubSystem/SystemManager';
+import { SystemEnum } from '../../SubSystem/SystemName';
+import { PaneNameEnum } from '../../path/PanelPath';
+import { PanelInstance } from '../BPW/Panel/PanelInstance';
 
 /**
  * ts mixin 到蓝图类
@@ -20,7 +23,12 @@ export class PlayerController {
     
     ReceiveBeginPlay() {
         console.log("BP_PC ReceiveBeginPlay");
-        UE.WidgetBlueprintLibrary.Create(this, UE.Class.Load(BlueprintPath.BPW_DuelPage), this).AddToViewport();
+        const panelManager = SystemManager.instance?.GetSystem(SystemEnum.PanelSystem);
+        const DuelPage = panelManager.AddPanelByName(PaneNameEnum.DuelPage) as PanelInstance;
+        DuelPage.Show();
+
+
+        // UE.WidgetBlueprintLibrary.Create(this, UE.Class.Load(BlueprintPath.BPW_DuelPage), this).AddToViewport();
         this.bShowMouseCursor = true;
         SystemManager.SetWorld(this.GetWorld());
     }

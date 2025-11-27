@@ -30,6 +30,7 @@ export class BP_CardMovementComponent {
     private UseZone: UE.Image | null = null;
     private Page: DuelPage | null = null;
 
+
     /**
      * @description 初始化数据
      */
@@ -246,6 +247,18 @@ export class BP_CardMovementComponent {
     }
     
     /**
+     * @description 重新计算TargetPos，并startinterp
+     */
+    private StartCardInterp() { 
+        this.TargetPos.Empty();
+        for(let idx = 0; idx < this.SampleList.length; idx++){
+            let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) , this.CalculateCardPosY(false));
+            this.TargetPos.Add(pos);
+        }
+        this.StartInterp();
+    }
+
+    /**
      * @description 开始插值
      */
     private StartInterp(): void {
@@ -276,15 +289,8 @@ export class BP_CardMovementComponent {
             transform.Translation.Y = this.CalculateCardPosY(false);
             mSampleWidget.SetRenderTransform(transform);
             console.log("[CardMovementComponent].AddCardSampleAndMoveCardToHand, mSampleWidget.SetRenderTransform");
-
-            // 计算目标位置
-            this.TargetPos.Empty();
-            for(let idx = 0; idx < this.SampleList.length; idx++){
-                let pos = new UE.Vector2D(this.CalculateCardPosByIdx(idx) , this.CalculateCardPosY(false));
-                this.TargetPos.Add(pos);
-            }
         }
-        this.StartInterp();
+        this.StartCardInterp();
         this.print();
     }
     
@@ -333,5 +339,13 @@ export class BP_CardMovementComponent {
         return IsInside;
     }
 
+    /**
+     * @description 移除SampleList，并StartCardInterp
+     * @Link DuelPage.RemoveCard Only 
+     */
+    RemoveSample(sample: SampleWidget) { 
+        this.SampleList.splice(this.SampleList.indexOf(sample), 1);
+        this.StartCardInterp();
+    }
 
 }
