@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-13 09:48:50
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-27 18:25:49
+ * @LastEditTime: 2025-11-28 18:02:47
  * @FilePath: \CG1111\README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -12,6 +12,19 @@ Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
 未解决：
 1. class 内的常用实例对象，需要通过"this"访问，有点麻烦？
 2. CommonDestroy（OnEnd子类）调用时，GetName为CommonDestroy，execute调用的是OnEnd的方法。
+3. 每个ts文件访问外面，都需要导入路径，巨麻烦。。。。
+    建议1： 将同类型的文件放在一个文件夹下，这样一个文件导入路径后，其他文件可以直接copy过来。
+
+
+
+### 11.28 PanelSystem 基础框架完成，PanelInstnace 基础完成
+完成了PanelSystem基础框架
+完成了PanelInstance基础，接入子类 MainUI、DuelPage、PullMenu(抽卡界面)、PullResult（抽卡结果界面）、TaskMenu 界面。
+开始写 TemplateBase 框架
+
+问题：
+1. 文件目录结构不清晰，需要整理。（参考项目文件）
+2. PanelInstnace 的销毁生命周期。
 
 
 ### 11.27  PanelSystem 进度10%，卡牌效果执行链 95%

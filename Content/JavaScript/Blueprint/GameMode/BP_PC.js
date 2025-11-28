@@ -4,13 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerController = void 0;
+/*
+ * @Author: kops88_cmp 3036435162@qq.com
+ * @Date: 2025-11-12 11:25:07
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-28 14:09:40
+ * @FilePath: \CG1111\TypeScript\Blueprint\GameMode\BP_PC.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 console.log("[BP_PC] head");
 const ue_1 = __importDefault(require("ue"));
 const puerts_1 = require("puerts");
 const Path_1 = require("../Path");
 const SystemManager_1 = require("../../SubSystem/SystemManager");
 const SystemName_1 = require("../../SubSystem/SystemName");
-const PanelPath_1 = require("../../path/PanelPath");
+const PanelNameDef_1 = require("../../path/PanelNameDef");
 /**
  * ts mixin 到蓝图类
  * 1. 加载蓝图类的uclass
@@ -25,12 +33,11 @@ class PlayerController {
     testactor = null;
     ReceiveBeginPlay() {
         console.log("BP_PC ReceiveBeginPlay");
-        const panelManager = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.PanelSystem);
-        const DuelPage = panelManager.AddPanelByName(PanelPath_1.PaneNameEnum.DuelPage);
-        DuelPage.Show();
-        // UE.WidgetBlueprintLibrary.Create(this, UE.Class.Load(BlueprintPath.BPW_DuelPage), this).AddToViewport();
-        this.bShowMouseCursor = true;
         SystemManager_1.SystemManager.SetWorld(this.GetWorld());
+        const panelManager = SystemManager_1.SystemManager.instance?.GetSystem(SystemName_1.SystemEnum.PanelSystem);
+        const StartPage = panelManager.AddPanelByName(PanelNameDef_1.PanelNameEnum.MainUI);
+        StartPage.Show();
+        this.bShowMouseCursor = true;
     }
 }
 exports.PlayerController = PlayerController;

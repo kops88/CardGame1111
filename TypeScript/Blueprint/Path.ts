@@ -12,8 +12,13 @@ console.log("[Path].Start")
 export const BlueprintPath = {
     BP_PC: "/Game/Blueprint/GameMode/BP_PC.BP_PC_C",
     BP_GI: "/Game/Blueprint/GameMode/BP_GI.BP_GI_C",
+
+    // Page
     BPW_DuelPage: "/Game/Blueprint/BPW/Page/BPW_DuelPage.BPW_DuelPage_C",
-    //BP_CardInstance: "/Game/Blueprint/BPW/CardInstance/BPW_CardInstance.BPW_CardInstance_C",
+    mainUI: "/Game/Blueprint/BPW/Page/mainUI.mainUI_C",
+    PullMenu: "/Game/Blueprint/BPW/Page/PullMenu.PullMenu_C",
+    PullResult: "/Game/Blueprint/BPW/Page/PullResult.PullResult_C",
+    TaskMenu: "/Game/Blueprint/BPW/Page/TaskMenu.TaskMenu_C",
 
     // CardInstance
     BPW_SampleWidget: "/Game/Blueprint/BPW/CardInstance/BPW_SampleWidget.BPW_SampleWidget_C",

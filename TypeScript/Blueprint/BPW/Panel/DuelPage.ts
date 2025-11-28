@@ -2,7 +2,9 @@ import { PanelInstance } from "./PanelInstance";
 import { blueprint } from 'puerts';
 import { BlueprintPath } from "../../Path";
 import { SystemManager } from '../../../SubSystem/SystemManager';
+import { PanelSystem } from '../../../SubSystem/PanelSystem';
 import { SystemEnum } from '../../../SubSystem/SystemName';
+import { PanelNameEnum } from "../../../path/PanelNameDef"
 import { CardDef, CardInstance } from '../CardInstance/CardInstance';
 import { BP_CardMovementComponent } from '../Page/BP_CardMovementComponent';
 import UE from "ue";
@@ -13,10 +15,13 @@ type BPW_DuelPage_C = UE.Game.Blueprint.BPW.Page.BPW_DuelPage.BPW_DuelPage_C;
 export class DuelPage extends PanelInstance {
 
     protected declare _panel: BPW_DuelPage_C;
+    protected _name = "DuelPage";
     private mCardMovementComponent: BP_CardMovementComponent | null = null;
     private CardList: CardInstance[] = [];
     
     override DoInit() {
+        console.log('[DuelPage] DoInit');
+        
         this._path = BlueprintPath.BPW_DuelPage;
         this.Load();
 
@@ -27,26 +32,28 @@ export class DuelPage extends PanelInstance {
     }
 
     RegisterEvents() {
-        console.log("[BPW_DuelPage].RegisterEvents");
+        console.log("[DuelPage].RegisterEvents");
 
         // TestBtn1 点击后添加一个卡牌。
         this._panel.TestBtn1.OnClicked.Add(() => {
-            console.log("[BPW_DuelPage].TestBtn1 Clicked");
-            // this.mCardMovementComponent?.AddCard();
+            console.log("[DuelPage].TestBtn1 Clicked");
             const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
             let cid = 1;
             Op?.DrawCardByCid(cid);
-            // console.log("[DuelPage].TestBtn1 Op = ", Op);
             console.log("[DuelPage].TestBtn1 Clicked, cid = ", cid);
         });
 
         this._panel.StartGameBtn.OnClicked.Add(() => {
             SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem).StartGame();
-            // console.log("[BPW_DuelPage].StartGameBtn Clicked");
-            // const Op = SystemManager.instance?.GetSystem(SystemEnum.GameOperationSystem);
-            // Op?.UseCard();
-            
+
         });
+
+        this._panel.QuitBtn.OnClicked.Add(() => {
+            this.Hide();
+            PanelSystem.GetInstance().AddPanelByName(PanelNameEnum.MainUI);
+         })
+
+
     };
 
     /**
@@ -56,13 +63,13 @@ export class DuelPage extends PanelInstance {
         const CompClass = UE.Class.Load(BlueprintPath.BP_CardMovementComponent);
         blueprint.load(UE.Game.Blueprint.BPW.Page.BP_CardMovementComponentt.BP_CardMovementComponentt_C);
         this.mCardMovementComponent = UE.GameplayStatics.BeginDeferredActorSpawnFromClass(
-            this._panel.GetWorld(),
+            SystemManager.GetWorld(),
             CompClass,
             UE.Transform.Identity
         ) as unknown as BP_CardMovementComponent;
         UE.GameplayStatics.FinishSpawningActor(this.mCardMovementComponent, UE.Transform.Identity);
         this.mCardMovementComponent?.SetNeedInfo(this._panel.CardUseZone, this);
-        console.log("[BPW_DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);     
+        console.log("[DuelPage].Construct mCardMovementComponent:", this.mCardMovementComponent);     
     }
 
 
@@ -92,7 +99,7 @@ export class DuelPage extends PanelInstance {
      * @Link BP_CardMovementComponent.OnDragReleased
      */
     UseCard(idx: number) { 
-        console.log("[BPW_DuelPage].UseCard, idx = ", idx);
+        console.log("[DuelPage].UseCard, idx = ", idx);
         this.CardList[idx].Use();
     }
 

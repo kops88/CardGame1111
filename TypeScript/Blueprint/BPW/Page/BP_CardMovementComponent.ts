@@ -5,7 +5,7 @@ import { SampleWidget  } from '../CardInstance/BPW_SampleWidget'
 import { CardInstance } from '../CardInstance/CardInstance'
 import { SystemManager } from '../../../SubSystem/SystemManager';
 import { BlueprintMixin } from '../../../Utils/mixinUtils';
-import { DuelPage } from './BPW_DuelPage';
+import { DuelPage } from '../Panel/DuelPage';
 // import { DuelPage } from './BPW_DuelPage';
 
 

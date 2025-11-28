@@ -48,8 +48,11 @@ export class AssetSystem extends SystemBase{
     /**
      * @description 通过 cid(rowname) 获取CardDef结构
      */
-    GetCardDefByCid(cid: string): CardDef | null {
+    GetCardDefByCid(cid: string | number): CardDef | null {
         console.log("[AssetSystem].GetCardDefByCid.input cid:", cid,"  CardTable:",this.CardTable?.GetName());
+        if(typeof cid === 'number') {
+            cid = cid.toString();
+        }
         if(this.CardTable) {
             blueprint.load(UE.Game.Blueprint.Table.CardDef.CardDef);
             const CardDefStruct = UE.Game.Blueprint.Table.CardDef.CardDef;

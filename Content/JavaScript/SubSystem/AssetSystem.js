@@ -48,6 +48,9 @@ class AssetSystem extends SystemName_1.SystemBase {
      */
     GetCardDefByCid(cid) {
         console.log("[AssetSystem].GetCardDefByCid.input cid:", cid, "  CardTable:", this.CardTable?.GetName());
+        if (typeof cid === 'number') {
+            cid = cid.toString();
+        }
         if (this.CardTable) {
             puerts_1.blueprint.load(ue_1.default.Game.Blueprint.Table.CardDef.CardDef);
             const CardDefStruct = ue_1.default.Game.Blueprint.Table.CardDef.CardDef;

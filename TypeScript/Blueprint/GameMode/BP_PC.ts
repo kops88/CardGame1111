@@ -1,11 +1,20 @@
+/*
+ * @Author: kops88_cmp 3036435162@qq.com
+ * @Date: 2025-11-12 11:25:07
+ * @LastEditors: kops88_cmp 3036435162@qq.com
+ * @LastEditTime: 2025-11-28 14:09:40
+ * @FilePath: \CG1111\TypeScript\Blueprint\GameMode\BP_PC.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 console.log("[BP_PC] head")
 import UE from 'ue';
 import { blueprint } from 'puerts';
 import { BlueprintPath } from '../Path';
 import { SystemManager } from '../../SubSystem/SystemManager';
 import { SystemEnum } from '../../SubSystem/SystemName';
-import { PaneNameEnum } from '../../path/PanelPath';
+import { PanelNameEnum } from '../../path/PanelNameDef';
 import { PanelInstance } from '../BPW/Panel/PanelInstance';
+import { log } from 'console';
 
 /**
  * ts mixin 到蓝图类
@@ -23,14 +32,13 @@ export class PlayerController {
     
     ReceiveBeginPlay() {
         console.log("BP_PC ReceiveBeginPlay");
-        const panelManager = SystemManager.instance?.GetSystem(SystemEnum.PanelSystem);
-        const DuelPage = panelManager.AddPanelByName(PaneNameEnum.DuelPage) as PanelInstance;
-        DuelPage.Show();
-
-
-        // UE.WidgetBlueprintLibrary.Create(this, UE.Class.Load(BlueprintPath.BPW_DuelPage), this).AddToViewport();
-        this.bShowMouseCursor = true;
         SystemManager.SetWorld(this.GetWorld());
+        
+        const panelManager = SystemManager.instance?.GetSystem(SystemEnum.PanelSystem);
+        const StartPage = panelManager.AddPanelByName(PanelNameEnum.MainUI) as PanelInstance;
+        StartPage.Show();
+
+        this.bShowMouseCursor = true;
     }
 }
 
