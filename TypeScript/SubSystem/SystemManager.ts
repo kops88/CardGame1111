@@ -19,7 +19,7 @@ import { $Nullable } from "puerts";
 import UE from "ue";
 import { SystemNameEnum, SystemType, SystemModuleType, SystemBase } from "./SystemName";
 // import { DuelPage } from '../Blueprint/BPW/Page/BPW_DuelPage';
-import DuelPage from '../Blueprint/BPW/Panel/DuelPage';
+import DuelPage from '../UI/Panel/DuelPage';
 import { AssetSystem } from "./AssetSystem";
 import { GameOperationSystem } from "./GameOperationSystem"
 import { PanelSystem } from "./PanelSystem";

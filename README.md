@@ -16,6 +16,10 @@ Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
     建议1： 将同类型的文件放在一个文件夹下，这样一个文件导入路径后，其他文件可以直接copy过来。
 
 
+### 11.29 抽卡逻辑80%，TemplateBase基础70%
+重新对代码文件进行分类。
+完成抽卡界面的逻辑80%
+TemplateBase基础70%
 
 ### 11.28 PanelSystem 基础框架完成，PanelInstnace 基础完成
 完成了PanelSystem基础框架

@@ -1,4 +1,27 @@
 {
-
     "editor.fontFamily": "Consolas, 'Courier New', 微软雅黑",
+    "files.exclude": {
+        "**/.github": true,
+        "**/.codebuddy": true,
+        "**/.vs": true,
+        "**/.vscode": false,
+        "**/asset": true,
+        "**/Binaries": true,
+        "**/Config": true,
+        "**/Content": false,
+        "**/DerivedDataCache": true,
+        "**/Intermediate": true,
+        "**/node_modules": true,
+        "**/Plugins": true,
+        "**/Saved": true,
+        "**/Source": true,
+        "**/Typing": true,
+        "*.sln": true,
+        "*.uproject": true,
+        "package.json": true,
+        "package-lock.json": true,
+        "tsconfig.json": true,
+        "README.md": false
+        ".vsconfig": true,
+    }
 }

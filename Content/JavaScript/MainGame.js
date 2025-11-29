@@ -10,14 +10,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 // import "BP/BP_Cube";
 console.log("[MainGame].head");
-// import "Blueprint/BPw/CardActionBase/ActionBase" //加这个是因为， actionbase 无法在EffectHandler 中导入。 // 再次注释，因为与ActionExtends 重复。
-require("Blueprint/BPW/CardActionBase/ActionExtends"); // 导入其中的mixin。
-require("Blueprint/BPW/CardActionBase/EndExtends"); // 导入其中的mixin。
-require("Blueprint/GameMode/BP_PC");
-require("./Blueprint/BPW/Page/BP_CardMovementComponent");
-require("Blueprint/BPW/Page/BPW_DuelPage");
-// import "Blueprint/BPW/CardInstance/BPW_CardInstance";
-require("Blueprint/BPW/CardInstance/BPW_SampleWidget");
+require("Card/Action/ActionBase"); //加这个是因为， actionbase 无法在EffectHandler 中导入。 // 再次注释，因为与ActionExtends 重复。
+require("Card/Action/ActionExtends"); // 导入其中的mixin。
+require("Card/Action/EndExtends"); // 导入其中的mixin。
+require("GameMode/BP_PC");
+require("UI/UIComponent/BP_CardMovementComponent");
+require("UI/Panel/DuelPage");
+require("Card/CardBase/CardInstance");
+require("Card/CardBase/BPW_SampleWidget");
 console.log("[MainGame].Start");
 // console.log("Hello World 7758");
 // console.log(UE.uclass);

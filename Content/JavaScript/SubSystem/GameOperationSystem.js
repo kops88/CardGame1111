@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameOperationSystem = void 0;
 const SystemManager_1 = require("./SystemManager");
 const SystemName_1 = require("./SystemName");
-const PhainonCore_1 = require("../Deck/PhainonCore");
+const PhainonCore_1 = require("../Card/Core/PhainonCore");
 class GameOperationSystem {
     static _instance;
     AS = undefined;

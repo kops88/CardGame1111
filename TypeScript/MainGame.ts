@@ -8,14 +8,14 @@
  */
 // import "BP/BP_Cube";
 console.log("[MainGame].head")
-// import "Blueprint/BPw/CardActionBase/ActionBase" //加这个是因为， actionbase 无法在EffectHandler 中导入。 // 再次注释，因为与ActionExtends 重复。
-import "Blueprint/BPW/CardActionBase/ActionExtends" // 导入其中的mixin。
-import "Blueprint/BPW/CardActionBase/EndExtends" // 导入其中的mixin。
-import "Blueprint/GameMode/BP_PC";
-import './Blueprint/BPW/Page/BP_CardMovementComponent';
-import "Blueprint/BPW/Page/BPW_DuelPage";
-// import "Blueprint/BPW/CardInstance/BPW_CardInstance";
-import "Blueprint/BPW/CardInstance/BPW_SampleWidget";
+import "Card/Action/ActionBase" //加这个是因为， actionbase 无法在EffectHandler 中导入。 // 再次注释，因为与ActionExtends 重复。
+import "Card/Action/ActionExtends" // 导入其中的mixin。
+import "Card/Action/EndExtends" // 导入其中的mixin。
+import "GameMode/BP_PC";
+import 'UI/UIComponent/BP_CardMovementComponent';
+import "UI/Panel/DuelPage";
+import "Card/CardBase/CardInstance";
+import "Card/CardBase/BPW_SampleWidget";
 console.log("[MainGame].Start")
 
 

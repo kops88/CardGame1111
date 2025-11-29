@@ -19,8 +19,8 @@ console.log('[AssetSystem] head')
 
 import UE from 'ue';
 import { $Nullable, blueprint } from "puerts";
-import { GameInstance } from '../Blueprint/GameMode/BP_GI';
-import { CardDef } from '../Blueprint/BPW/CardInstance/CardInstance';
+import { GameInstance } from '../GameMode/BP_GI';
+import { CardDef } from '../Card/CardBase/CardInstance';
 import { SystemBase } from './SystemName';
 import { $ref, $unref, $Ref, $set } from 'puerts';
 console.log('[AssetSystem] start');

@@ -10,9 +10,9 @@
 import { AssetSystem } from './AssetSystem';
 import { SystemManager,  } from './SystemManager';
 import { SystemEnum, SystemType } from './SystemName';
-import { DuelPage } from '../Blueprint/BPW/Panel/DuelPage';
-import { CardInstance } from '../Blueprint/BPW/CardInstance/CardInstance';
-import { PhainonCore, CoreCard } from '../Deck/PhainonCore'
+import { DuelPage } from '../UI/Panel/DuelPage';
+import { CardInstance } from '../Card/CardBase/CardInstance';
+import { PhainonCore, CoreCard } from '../Card/Core/PhainonCore'
 
 
 export class GameOperationSystem {
