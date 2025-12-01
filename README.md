@@ -15,6 +15,9 @@ Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
 3. 每个ts文件访问外面，都需要导入路径，巨麻烦。。。。
     建议1： 将同类型的文件放在一个文件夹下，这样一个文件导入路径后，其他文件可以直接copy过来。
 
+### 12.01 完成，TemplateBase、抽卡界面，ViewComp进度10%
+完成，TemplateBase、抽卡界面，ViewComp进度10%
+
 
 ### 11.29 抽卡逻辑80%，TemplateBase基础70%
 重新对代码文件进行分类。

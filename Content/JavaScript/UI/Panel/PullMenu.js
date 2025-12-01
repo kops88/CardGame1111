@@ -35,6 +35,12 @@ class PullMenu extends PanelInstance_1.PanelInstance {
             const resultPanel = PanelSystem_1.PanelSystem.GetInstance().AddPanelByName(PanelNameDef_1.PanelNameEnum.PullResult);
             resultPanel.ShowResultTen(result);
         });
+        this._panel.OnePullBtn.OnClicked.Add(() => {
+            const result = this.PullAbility.OnePull();
+            this.Hide();
+            const resultPanel = PanelSystem_1.PanelSystem.GetInstance().AddPanelByName(PanelNameDef_1.PanelNameEnum.PullResult);
+            resultPanel.ShowResultOne(result);
+        });
     }
 }
 exports.default = PullMenu;

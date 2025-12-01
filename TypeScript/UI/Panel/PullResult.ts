@@ -26,13 +26,26 @@ class PullResult extends PanelInstance {
     protected _name = "PullResult";
 
     override DoInit() {
+        this.RegisterEvent();
 
     }
 
     RegisterEvent() { 
         this._panel.Close.OnClicked.Add(() => {
+            console.log("Close 7758");
+            
             this.Destroy();
             PanelSystem.GetInstance().AddPanelByName(PanelNameEnum.PullMenu); 
+        });
+
+        this._panel.Skip.OnClicked.Add(() => {
+            // 调用所有子组件的show方法
+            this.TemplateUtils.TemplateInstMap.forEach((value, key) => {
+                if(value instanceof Pull_CardBack) { 
+                    value.FlipCard();
+                }
+            });
+            
         })
     }
 
@@ -46,6 +59,15 @@ class PullResult extends PanelInstance {
             template.Show(false);
             this._panel.WrapBox.AddChildToWrapBox(template.GetObject());
         }
+    }
+
+    ShowResultOne(card: CardDef) { 
+        this._panel.WrapBox.ClearChildren();
+        const template = this.TemplateUtils.CreateChildTemplate(TemplateNameEnum.Pull_CardBack, false) as Pull_CardBack
+        template.SetCardDef(card);
+        template.SetParentPanel(this);
+        template.Show(false);
+        this._panel.WrapBox.AddChildToWrapBox(template.GetObject());
     }
 
 

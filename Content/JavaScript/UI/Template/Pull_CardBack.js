@@ -26,7 +26,6 @@ class Pull_CardBack extends TemplateBase_1.TemplateBase {
         this.object.Trigger.OnClicked.Add(() => {
             if (!this.bFlip) {
                 this.FlipCard();
-                this.bFlip = true;
             }
         });
     }
@@ -36,6 +35,7 @@ class Pull_CardBack extends TemplateBase_1.TemplateBase {
     FlipCard() {
         this.object.BorderBack.SetVisibility(ue_1.default.ESlateVisibility.Hidden);
         this.object.Image.SetBrushFromSoftTexture(this.cardDef.img);
+        this.bFlip = true;
         // this.object.Border.SetVisibility(UE.ESlateVisibility.Hidden);
     }
     GetObject() { return this.object; }

@@ -12,9 +12,15 @@ class PullAbility {
     OnStart() {
         this.ms = SystemManager_1.SystemManager.instance.GetSystem(SystemName_1.SystemEnum.AssetSystem);
     }
+    /**
+     * 抽一张牌，暂时返回卡1；
+     */
     OnePull() {
         return this.ms.GetCardDefByCid(1);
     }
+    /**
+     * 抽十张牌，暂时返回卡1；
+     */
     TenPull() {
         let CardList = [];
         for (let i = 0; i < 10; i++) {

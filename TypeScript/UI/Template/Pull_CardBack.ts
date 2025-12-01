@@ -30,7 +30,7 @@ export class Pull_CardBack extends TemplateBase {
         this.object.Trigger.OnClicked.Add(() => {
             if(!this.bFlip) {
                 this.FlipCard();
-                this.bFlip = true;
+                
             }
         });
     }
@@ -39,9 +39,10 @@ export class Pull_CardBack extends TemplateBase {
         this.cardDef = cardDef;
     }
 
-    private FlipCard() { 
+    FlipCard() { 
         this.object.BorderBack.SetVisibility(UE.ESlateVisibility.Hidden);
         this.object.Image.SetBrushFromSoftTexture(this.cardDef.img);
+        this.bFlip = true;
         // this.object.Border.SetVisibility(UE.ESlateVisibility.Hidden);
     }
 
