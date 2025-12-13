@@ -1,0 +1,527 @@
+﻿#pragma once
+
+class SInfiniteScrollBox
+{
+public:
+	
+};
+
+
+
+ SMyScrollBox.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Widgets/SCompoundWidget.h"
+#include "Widgets/DeclarativeSyntaxSupport.h"
+#include "SMyScrollPanel.h"
+
+class MYGAME_API SMyScrollBox : public SCompoundWidget
+{
+public:
+    using FSlot = SMyScrollPanel::FSlot;
+
+    SLATE_BEGIN_ARGS(SMyScrollBox)
+        : _Orientation(Orient_Vertical)
+        , _SlotSpacing(FVector2f::ZeroVector)
+        , _ContentPadding(FMargin())
+    {
+        _Clipping = EWidgetClipping::ClipToBounds;
+    }
+        SLATE_SLOT_ARGUMENT(FSlot, Slots)
+        SLATE_ARGUMENT(EOrientation, Orientation)
+        SLATE_ARGUMENT(FVector2f, SlotSpacing)
+        SLATE_ARGUMENT(FMargin, ContentPadding)
+    SLATE_END_ARGS()
+
+    void Construct(const FArguments& InArgs);
+
+    /** 添加 Slot */
+    using FScopedWidgetSlotArguments = TPanelChildren<FSlot>::FScopedWidgetSlotArguments;
+    FScopedWidgetSlotArguments AddSlot();
+
+    /** 移除 Slot */
+    void RemoveSlot(const TSharedRef<SWidget>& WidgetToRemove);
+
+    /** 清空所有子控件 */
+    void ClearChildren();
+
+    /** 获取子控件数量 */
+    int32 NumSlots() const;
+
+    /** 设置滚动方向 */
+    void SetOrientation(EOrientation InOrientation);
+
+    /** 设置间距 */
+    void SetSlotSpacing(FVector2f InSpacing);
+
+    /** 设置内边距 */
+    void SetContentPadding(FMargin InPadding);
+
+protected:
+    /** 子控件容器 */
+    TSharedPtr<SMyScrollPanel> ScrollPanel;
+
+    /** 滚动方向 */
+    EOrientation Orientation;
+};
+cpp
+插入
+复制
+新建文件
+保存
+应用代码
+// SMyScrollBox.cpp
+#include "SMyScrollBox.h"
+#include "Widgets/Layout/SBox.h"
+
+void SMyScrollBox::Construct(const FArguments& InArgs)
+{
+    Orientation = InArgs._Orientation;
+
+    // 创建滚动面板
+    TArray<FSlot::FSlotArguments> Slots;
+    for (FSlot::FSlotArguments& SlotArg : const_cast<TArray<FSlot::FSlotArguments>&>(InArgs._Slots))
+    {
+        Slots.Add(MoveTemp(SlotArg));
+    }
+
+    SAssignNew(ScrollPanel, SMyScrollPanel)
+        .Orientation(Orientation)
+        .SlotSpacing(InArgs._SlotSpacing)
+        .ContentPadding(InArgs._ContentPadding);
+
+    ScrollPanel->Construct(
+        SMyScrollPanel::FArguments()
+            .Orientation(Orientation)
+            .SlotSpacing(InArgs._SlotSpacing)
+            .ContentPadding(InArgs._ContentPadding),
+        MoveTemp(Slots)
+    );
+
+    ChildSlot
+    [
+        ScrollPanel.ToSharedRef()
+    ];
+}
+
+SMyScrollBox::FScopedWidgetSlotArguments SMyScrollBox::AddSlot()
+{
+    return ScrollPanel->Children.AddSlot();
+}
+
+void SMyScrollBox::RemoveSlot(const TSharedRef<SWidget>& WidgetToRemove)
+{
+    ScrollPanel->Children.Remove(WidgetToRemove);
+}
+
+void SMyScrollBox::ClearChildren()
+{
+    ScrollPanel->Children.Empty();
+}
+
+int32 SMyScrollBox::NumSlots() const
+{
+    return ScrollPanel->Children.Num();
+}
+
+void SMyScrollBox::SetOrientation(EOrientation InOrientation)
+{
+    Orientation = InOrientation;
+    ScrollPanel->Orientation = InOrientation;
+}
+
+void SMyScrollBox::SetSlotSpacing(FVector2f InSpacing)
+{
+    ScrollPanel->SlotSpacing = InSpacing;
+}
+
+void SMyScrollBox::SetContentPadding(FMargin InPadding)
+{
+    ScrollPanel->ContentPadding = InPadding;
+}
+第三步：UMG 层 - Slot 包装类
+cpp
+插入
+复制
+新建文件
+保存
+应用代码
+// UMyScrollBoxSlot.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/PanelSlot.h"
+#include "SMyScrollPanel.h"
+#include "SMyScrollBox.h"
+#include "UMyScrollBoxSlot.generated.h"
+
+UCLASS()
+class MYGAME_API UMyScrollBoxSlot : public UPanelSlot
+{
+    GENERATED_UCLASS_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Layout|ScrollBox Slot")
+    FMargin Padding;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Layout|ScrollBox Slot")
+    TEnumAsByte<EHorizontalAlignment> HorizontalAlignment;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Layout|ScrollBox Slot")
+    TEnumAsByte<EVerticalAlignment> VerticalAlignment;
+
+public:
+    UFUNCTION(BlueprintCallable, Category = "Layout|ScrollBox Slot")
+    void SetPadding(FMargin InPadding);
+
+    UFUNCTION(BlueprintCallable, Category = "Layout|ScrollBox Slot")
+    void SetHorizontalAlignment(EHorizontalAlignment InHorizontalAlignment);
+
+    UFUNCTION(BlueprintCallable, Category = "Layout|ScrollBox Slot")
+    void SetVerticalAlignment(EVerticalAlignment InVerticalAlignment);
+
+    // UPanelSlot interface
+    virtual void SynchronizeProperties() override;
+    virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+
+    /** 构建 Slate Slot */
+    void BuildSlot(TSharedRef<SMyScrollBox> ScrollBox);
+
+private:
+    SMyScrollPanel::FSlot* Slot;
+};
+cpp
+插入
+复制
+新建文件
+保存
+应用代码
+// UMyScrollBoxSlot.cpp
+#include "UMyScrollBoxSlot.h"
+#include "Components/Widget.h"
+
+UMyScrollBoxSlot::UMyScrollBoxSlot(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer)
+    , Slot(nullptr)
+{
+    HorizontalAlignment = HAlign_Fill;
+    VerticalAlignment = VAlign_Fill;
+}
+
+void UMyScrollBoxSlot::BuildSlot(TSharedRef<SMyScrollBox> ScrollBox)
+{
+    ScrollBox->AddSlot()
+        .Padding(Padding)
+        .HAlign(HorizontalAlignment)
+        .VAlign(VerticalAlignment)
+        .Expose(Slot)
+    [
+        Content == nullptr ? SNullWidget::NullWidget : Content->TakeWidget()
+    ];
+}
+
+void UMyScrollBoxSlot::SetPadding(FMargin InPadding)
+{
+    Padding = InPadding;
+    if (Slot)
+    {
+        Slot->SetPadding(InPadding);
+    }
+}
+
+void UMyScrollBoxSlot::SetHorizontalAlignment(EHorizontalAlignment InHorizontalAlignment)
+{
+    HorizontalAlignment = InHorizontalAlignment;
+    if (Slot)
+    {
+        Slot->SetHorizontalAlignment(InHorizontalAlignment);
+    }
+}
+
+void UMyScrollBoxSlot::SetVerticalAlignment(EVerticalAlignment InVerticalAlignment)
+{
+    VerticalAlignment = InVerticalAlignment;
+    if (Slot)
+    {
+        Slot->SetVerticalAlignment(InVerticalAlignment);
+    }
+}
+
+void UMyScrollBoxSlot::SynchronizeProperties()
+{
+    SetPadding(Padding);
+    SetHorizontalAlignment(HorizontalAlignment);
+    SetVerticalAlignment(VerticalAlignment);
+}
+
+void UMyScrollBoxSlot::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseSlateResources(bReleaseChildren);
+    Slot = nullptr;
+}
+第四步：UMG 层 - 列表控件主体（核心：编辑器预览）
+cpp
+插入
+复制
+新建文件
+保存
+应用代码
+// UMyScrollBox.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/PanelWidget.h"
+#include "Blueprint/UserWidget.h"
+#include "UMyScrollBox.generated.h"
+
+class SMyScrollBox;
+
+UCLASS()
+class MYGAME_API UMyScrollBox : public UPanelWidget
+{
+    GENERATED_UCLASS_BODY()
+
+public:
+    /** 滚动方向 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScrollBox")
+    TEnumAsByte<EOrientation> Orientation;
+
+    /** Item 控件类 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScrollBox|Item", meta = (DisplayName = "Item控件类"))
+    TSubclassOf<UUserWidget> ChildWidgetClass;
+
+    /** 编辑器预览数量 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScrollBox|Editor", meta = (DisplayName = "编辑器预览数量", ClampMin = "0"))
+    int32 ShowNum = 0;
+
+    /** Item 间距 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScrollBox|Layout", meta = (DisplayName = "Item间距"))
+    FVector2f InnerSlotPadding;
+
+    /** 内边距 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScrollBox|Layout", meta = (DisplayName = "内边距"))
+    FMargin ContentPadding;
+
+public:
+    UFUNCTION(BlueprintCallable, Category = "ScrollBox")
+    void SetOrientation(EOrientation NewOrientation);
+
+    //~ Begin UWidget Interface
+    virtual void SynchronizeProperties() override;
+    virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+    //~ End UWidget Interface
+
+#if WITH_EDITOR
+    virtual const FText GetPaletteCategory() override;
+#endif
+
+protected:
+    //~ Begin UWidget Interface
+    virtual TSharedRef<SWidget> RebuildWidget() override;
+    //~ End UWidget Interface
+
+    // UPanelWidget
+    virtual UClass* GetSlotClass() const override;
+    virtual void OnSlotAdded(UPanelSlot* Slot) override;
+    virtual void OnSlotRemoved(UPanelSlot* Slot) override;
+
+protected:
+    TSharedPtr<SMyScrollBox> MyScrollBox;
+
+private:
+    /** 上一次的预览数量（用于检测变化） */
+    int32 LastShowNum = 0;
+};
+cpp
+插入
+复制
+新建文件
+保存
+应用代码
+// UMyScrollBox.cpp
+#include "UMyScrollBox.h"
+#include "UMyScrollBoxSlot.h"
+#include "SMyScrollBox.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+
+#define LOCTEXT_NAMESPACE "MyScrollBox"
+
+UMyScrollBox::UMyScrollBox(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer)
+    , Orientation(Orient_Vertical)
+{
+    bIsVariable = true;
+    SetVisibilityInternal(ESlateVisibility::Visible);
+    SetClipping(EWidgetClipping::ClipToBounds);
+}
+
+TSharedRef<SWidget> UMyScrollBox::RebuildWidget()
+{
+    MyScrollBox = SNew(SMyScrollBox)
+        .Orientation(Orientation)
+        .SlotSpacing(InnerSlotPadding)
+        .ContentPadding(ContentPadding);
+
+    // 构建已有的子控件
+    for (UPanelSlot* PanelSlot : Slots)
+    {
+        if (UMyScrollBoxSlot* TypedSlot = Cast<UMyScrollBoxSlot>(PanelSlot))
+        {
+            TypedSlot->Parent = this;
+            TypedSlot->BuildSlot(MyScrollBox.ToSharedRef());
+        }
+    }
+
+    return MyScrollBox.ToSharedRef();
+}
+
+void UMyScrollBox::SynchronizeProperties()
+{
+    Super::SynchronizeProperties();
+
+    if (!MyScrollBox.IsValid())
+    {
+        return;
+    }
+
+    // 同步属性
+    MyScrollBox->SetOrientation(Orientation);
+    MyScrollBox->SetSlotSpacing(InnerSlotPadding);
+    MyScrollBox->SetContentPadding(ContentPadding);
+
+    // ========== 编辑器预览功能（核心） ==========
+#if WITH_EDITOR
+    if (const UWorld* World = GetWorld())
+    {
+        // 只在编辑器预览模式下生效
+        if (World->WorldType == EWorldType::EditorPreview)
+        {
+            // 检测预览数量是否变化
+            if (ShowNum != LastShowNum || ShowNum != GetChildrenCount())
+            {
+                // 清空现有子控件
+                ClearChildren();
+
+                // 创建指定数量的 Item 控件
+                if (ChildWidgetClass && ShowNum > 0)
+                {
+                    APlayerController* PlayerController = World->GetFirstPlayerController();
+                    for (int32 i = 0; i < ShowNum; ++i)
+                    {
+                        UWidget* ChildWidget = UWidgetBlueprintLibrary::Create(
+                            const_cast<UWorld*>(World), 
+                            ChildWidgetClass, 
+                            PlayerController
+                        );
+                        if (ChildWidget)
+                        {
+                            AddChild(ChildWidget);
+                        }
+                    }
+                }
+
+                LastShowNum = ShowNum;
+            }
+        }
+    }
+#endif
+}
+
+void UMyScrollBox::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseSlateResources(bReleaseChildren);
+    MyScrollBox.Reset();
+}
+
+void UMyScrollBox::SetOrientation(EOrientation NewOrientation)
+{
+    Orientation = NewOrientation;
+    if (MyScrollBox.IsValid())
+    {
+        MyScrollBox->SetOrientation(NewOrientation);
+    }
+}
+
+UClass* UMyScrollBox::GetSlotClass() const
+{
+    return UMyScrollBoxSlot::StaticClass();
+}
+
+void UMyScrollBox::OnSlotAdded(UPanelSlot* InSlot)
+{
+    if (MyScrollBox.IsValid())
+    {
+        CastChecked<UMyScrollBoxSlot>(InSlot)->BuildSlot(MyScrollBox.ToSharedRef());
+    }
+}
+
+void UMyScrollBox::OnSlotRemoved(UPanelSlot* InSlot)
+{
+    if (MyScrollBox.IsValid() && InSlot->Content)
+    {
+        TSharedPtr<SWidget> Widget = InSlot->Content->GetCachedWidget();
+        if (Widget.IsValid())
+        {
+            MyScrollBox->RemoveSlot(Widget.ToSharedRef());
+        }
+    }
+}
+
+#if WITH_EDITOR
+const FText UMyScrollBox::GetPaletteCategory()
+{
+    return LOCTEXT("Panel", "Panel");
+}
+#endif
+
+#undef LOCTEXT_NAMESPACE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MHInfiniteScrollBox.cpp
+插入
+复制
+新建文件
+保存
+应用代码
+	// 编辑器预览功能
+#if WITH_EDITOR
+	if (const UWorld* World = GetWorld())
+	{
+		if (World->WorldType == EWorldType::EditorPreview)
+		{
+			if (ShowNum && ShowNum != GetChildrenCount())
+			{
+				ClearChildren();
+				for (int i = 0; i < ShowNum; ++i)
+				{
+					APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+					UWidget* ChildWidget = UWidgetBlueprintLibrary::Create(GetWorld(), ChildWidgetClass, PlayerController);
+					AddChild(ChildWidget);
+				}
+				SetDataItemNum(ShowNum, true);
+			}
+		}
+	}
+#endif
+
+
+
