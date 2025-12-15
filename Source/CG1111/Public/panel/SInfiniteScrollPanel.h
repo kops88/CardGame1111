@@ -1,8 +1,11 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
-#include "Widgets/SCompoundWidget.h"
+#include "Widgets/SPanel.h"
 
-class SInfiniteScrollPanel : public SCompoundWidget
+/**
+ * 	布局容器 - 管理多个子控件的排列和布局
+ */
+class SInfiniteScrollPanel : public SPanel
 {
 	
 public:
@@ -35,20 +38,22 @@ public:
 	{
 	}
 	
-	void Construct(const FArguments& InArgs, TArray<FSlot::FSlotArguments>& InSlots);
+	void Construct(const FArguments& InArgs, TArray<FSlot::FSlotArguments> InSlots = TArray<FSlot::FSlotArguments>());
 public:
 	
 	TPanelChildren<FSlot> Children;
 	EOrientation Orientation = Orient_Vertical;
-	//float PhysicalOffset = 0.0f;
+	float PhysicalOffset = 0.0f;
 	/** 间距 */
 	FVector2f SlotSpacing;
 	/** 内间距 */
 	FMargin ContentPadding;
 	
-	//void SetPhysicalOffset(float InOffset);
+	void SetPhysicalOffset(float InOffset);
 	
+	/** 根据布局方式、slot信息，管理子控件的位置 */
 	virtual void OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
+	/** 计算自身组件的位置 ？ */
 	virtual FVector2D ComputeDesiredSize(float) const override;
 	virtual FChildren* GetChildren() override { return &Children; }
 	

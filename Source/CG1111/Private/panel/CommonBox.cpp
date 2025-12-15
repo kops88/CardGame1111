@@ -1,7 +1,11 @@
+﻿#include "panel/CommonBox.h"
+#include "panel/SIScrollBox.h"
+#include "panel/CommonBoxSlot.h" 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
-#include "panel//CommonBox.h"
-#include "panel/SCommonBox.h"
-
+// q1 SetClipping?
+// q2 WITH_EDITOR宏？ 
+// q3 CastChecked？
 
 UCommonBox::UCommonBox(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -9,50 +13,108 @@ UCommonBox::UCommonBox(const FObjectInitializer& ObjectInitializer)
 {
 	bIsVariable = true;
 	SetVisibilityInternal(ESlateVisibility::Visible);
+	SetClipping(EWidgetClipping::ClipToBounds);
 }
 
-TSharedRef<SWidget> UCommonBox::RebuildWidget()
+
+void UCommonBox::SetOrientation(EOrientation NewOrientation)
 {
-	mBox = SNew(SCommonBox).Orientation(Orientation);
-	return mBox.ToSharedRef();
+	Orientation = NewOrientation;
+	if (MyScrollBox.IsValid())
+	{
+		MyScrollBox->SetOrientation(NewOrientation);
+	}
 }
 
 void UCommonBox::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
-	
-	if (mBox.IsValid())
+	if (!MyScrollBox.IsValid())
 	{
-		 mBox->SetOrientation(Orientation);
+		return;
+	}
+	// 同步属性
+	MyScrollBox->SetOrientation(Orientation);
+	MyScrollBox->SetSlotSpacing(InnerSlotPadding);
+	MyScrollBox->SetContentPadding(ContentPadding);
+	const UWorld* World = GetWorld();
+	if (ShowNum != LastShowNum || ShowNum != GetChildrenCount())
+	{
+		ClearChildren();
+		if (ChildWidgetClass && ShowNum > 0)
+		{
+			APlayerController* PlayerController = World->GetFirstPlayerController();
+			for (int32 i = 0; i < ShowNum; ++i)
+			{
+				UWidget* ChildWidget = UWidgetBlueprintLibrary::Create(
+					const_cast<UWorld*>(World),
+					ChildWidgetClass,
+					PlayerController
+				);
+				if (ChildWidget)
+				{
+					AddChild(ChildWidget);
+				}
+			}
+		}
+		LastShowNum = ShowNum;
 	}
 }
 
 void UCommonBox::ReleaseSlateResources(bool bReleaseChildren)
 {
 	Super::ReleaseSlateResources(bReleaseChildren);
-	mBox.Reset();
+	MyScrollBox.Reset();
+}
+
+#if WITH_EDITOR
+const FText UCommonBox::GetPaletteCategory()
+{
+	return Super::GetPaletteCategory();
+}
+#endif
+
+TSharedRef<SWidget> UCommonBox::RebuildWidget()
+{
+	MyScrollBox = SNew(SIScrollBox)
+		.Orientation(Orientation)
+		.SlotSpacing(InnerSlotPadding)
+		.ContentPadding(ContentPadding);
+	
+	// 构建已有的子控件
+	for (UPanelSlot* PanelSlot : Slots)
+	{
+		if (UCommonBoxSlot* TypedSlot = Cast<UCommonBoxSlot>(PanelSlot))
+		{
+			TypedSlot->Parent = this;
+			TypedSlot->BuildSlot(MyScrollBox.ToSharedRef());
+		}
+	}
+	return MyScrollBox.ToSharedRef();
 }
 
 UClass* UCommonBox::GetSlotClass() const
 {
-	return UPanelSlot::StaticClass();
+	// 在RebuildWidget中指定slot类型
+	return UCommonBoxSlot::StaticClass();
 }
 
-void UCommonBox::OnSlotAdded(UPanelSlot* InSlot)
+void UCommonBox::OnSlotAdded(UPanelSlot* inSlot)
 {
-	//Super::OnSlotAdded(InSlot);
-}
-
-void UCommonBox::OnSlotRemoved(UPanelSlot* InSlot)
-{
-	//Super::OnSlotRemoved(InSlot);
-}
-
-void UCommonBox::SetOrientation(EOrientation newOrientation)
-{
-	Orientation = newOrientation;
-	if (mBox.IsValid())
+	if (MyScrollBox.IsValid())
 	{
-		mBox->SetOrientation(newOrientation);
+		CastChecked<UCommonBoxSlot>(inSlot)->BuildSlot(MyScrollBox.ToSharedRef());
+	}
+}
+
+void UCommonBox::OnSlotRemoved(UPanelSlot* inSlot)
+{
+	if (MyScrollBox.IsValid() && inSlot->Content)
+	{
+		TSharedPtr<SWidget> Widget = inSlot->Content->GetCachedWidget();
+		if (Widget.IsValid())
+		{
+			MyScrollBox->RemoveSlot(Widget.ToSharedRef());
+		}
 	}
 }

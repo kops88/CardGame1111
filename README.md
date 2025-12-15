@@ -2,7 +2,7 @@
  * @Author: kops88_cmp 3036435162@qq.com
  * @Date: 2025-11-13 09:48:50
  * @LastEditors: kops88_cmp 3036435162@qq.com
- * @LastEditTime: 2025-11-28 18:02:47
+ * @LastEditTime: 2025-12-15 21:24:41
  * @FilePath: \CG1111\README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -14,6 +14,11 @@ Plugins文件： 使用Puerts （ThirdParty中）v8 使用 v8_9.4.146.24
 2. CommonDestroy（OnEnd子类）调用时，GetName为CommonDestroy，execute调用的是OnEnd的方法。
 3. 每个ts文件访问外面，都需要导入路径，巨麻烦。。。。
     建议1： 将同类型的文件放在一个文件夹下，这样一个文件导入路径后，其他文件可以直接copy过来。
+
+### 12.15 类无限列表UMG，进度20%
+    能在编辑器显示、预览。
+    能在运行时显示。
+### 12.13 开始写类无限列表UMG，进度5%
 
 ### 12.01 完成，TemplateBase、抽卡界面，ViewComp进度10%
 完成，TemplateBase、抽卡界面，ViewComp进度10%
